@@ -1,0 +1,66 @@
+[
+  {
+    "id": "001",
+    "customer": "Sophia Brown",
+    "driver": "Emily Davis",
+    "location": "Gulshan 2",
+    "time": "5 min ago",
+    "status": "Pending",
+    "customer_phone": "+880 1711-111111",
+    "customer_email": "sophia.brown@example.com",
+    "driver_phone": "+880 1811-111111",
+    "order_details": {
+      "items": "2x Vanilla Cone, 1x Chocolate Sundae",
+      "total_amount": "450 BDT",
+      "payment_method": "Cash on Delivery"
+    }
+  },
+  {
+    "id": "002",
+    "customer": "Michael Johnson",
+    "driver": "James Wilson",
+    "location": "Pallabi",
+    "time": "10 min ago",
+    "status": "Accepted",
+    "customer_phone": "+880 1722-222222",
+    "customer_email": "michael.j@example.com",
+    "driver_phone": "+880 1822-222222",
+    "order_details": {
+      "items": "1x Strawberry Swirl, 1x Choco Bar",
+      "total_amount": "250 BDT",
+      "payment_method": "bKash"
+    }
+  },
+  {
+    "id": "003",
+    "customer": "Ava Thompson",
+    "driver": "William Lee",
+    "location": "Banani",
+    "time": "1 hour ago",
+    "status": "Completed",
+    "customer_phone": "+880 1733-333333",
+    "customer_email": "ava.t@example.com",
+    "driver_phone": "+880 1833-333333",
+    "order_details": {
+      "items": "2x Mango Sorbet, 1x Kulfi",
+      "total_amount": "400 BDT",
+      "payment_method": "Credit Card"
+    }
+  },
+  {
+    "id": "004",
+    "customer": "Isabella Garcia",
+    "driver": "Ethan Anderson",
+    "location": "Mirpur 11.5",
+    "time": "2 hours ago",
+    "status": "Cancelled",
+    "customer_phone": "+880 1744-444444",
+    "customer_email": "isabella.g@example.com",
+    "driver_phone": "+880 1844-444444",
+    "order_details": {
+      "items": "1x Pistachio Delight, 2x Orange Stick",
+      "total_amount": "380 BDT",
+      "payment_method": "Cash on Delivery"
+    }
+  }
+]

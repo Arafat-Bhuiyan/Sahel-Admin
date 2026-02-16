@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "driverName": "Emily Davis",
+    "phone": "555-0101",
+    "email": "emily.davis@example.com",
+    "driverId": "ID #1014523",
+    "status": "Active",
+    "shift": "On Shift",
+    "zone": "Zone A"
+  },
+  {
+    "id": "2",
+    "driverName": "Michael Johnson",
+    "phone": "555-0102",
+    "email": "michael.j@example.com",
+    "driverId": "ID #1014524",
+    "status": "Inactive",
+    "shift": "Offline",
+    "zone": "Zone B"
+  },
+  {
+    "id": "3",
+    "driverName": "Sophia Brown",
+    "phone": "555-0103",
+    "email": "sophia.b@example.com",
+    "driverId": "ID #1014525",
+    "status": "Active",
+    "shift": "Offline",
+    "zone": "Zone C"
+  },
+  {
+    "id": "4",
+    "driverName": "James Wilson",
+    "phone": "555-0104",
+    "email": "james.wilson@example.com",
+    "driverId": "ID #1014526",
+    "status": "Inactive",
+    "shift": "On Shift",
+    "zone": "Zone A"
+  },
+  {
+    "id": "5",
+    "driverName": "Olivia Martinez",
+    "phone": "555-0105",
+    "email": "olivia.m@example.com",
+    "driverId": "ID #1014527",
+    "status": "Active",
+    "shift": "Offline",
+    "zone": "Zone D"
+  },
+  {
+    "id": "6",
+    "driverName": "Ethan Anderson",
+    "phone": "555-0106",
+    "email": "ethan.a@example.com",
+    "driverId": "ID #1014528",
+    "status": "Inactive",
+    "shift": "On Shift",
+    "zone": "Zone B"
+  },
+  {
+    "id": "7",
+    "driverName": "Ava Thompson",
+    "phone": "555-0107",
+    "email": "ava.t@example.com",
+    "driverId": "ID #1014529",
+    "status": "Active",
+    "shift": "On Shift",
+    "zone": "Zone E"
+  },
+  {
+    "id": "8",
+    "driverName": "William Lee",
+    "phone": "555-0108",
+    "email": "william.lee@example.com",
+    "driverId": "ID #1014530",
+    "status": "Active",
+    "shift": "On Shift",
+    "zone": "Zone A"
+  },
+  {
+    "id": "9",
+    "driverName": "Isabella Garcia",
+    "phone": "555-0109",
+    "email": "isabella.g@example.com",
+    "driverId": "ID #1014531",
+    "status": "Inactive",
+    "shift": "Offline",
+    "zone": "Zone F"
+  }
+]
