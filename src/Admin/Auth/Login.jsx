@@ -2,6 +2,7 @@ import React from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,22 +10,30 @@ export default function Login() {
   const [password, setPassword] = React.useState("");
   const [show, setShow] = React.useState(false);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: replace with real auth call
-    if (email && password) {
-      // pretend login success
+    const demoEmail = "admin@gmail.com";
+    const demoPassword = "123";
+
+    if (email === demoEmail && password === demoPassword) {
+      toast.success("Login Successful!");
       navigate("/admin", { replace: true });
+    } else {
+      toast.error(
+        "Invalid email or password. Hint: admin@gmail.com / password123",
+      );
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#100f0f]">
+      <Toaster position="top-right" />
       <div className="w-full max-w-md p-8">
         <div className="bg-[#201f1f] border border-[#333] rounded-md p-8 shadow-sm">
           <div className="flex justify-center mb-6">
-            <h1 className="text-white logo-font font-bold text-2xl tracking-widest">Sahel Intelligence</h1>
+            <h1 className="text-white logo-font font-bold text-2xl tracking-widest">
+              Sahel Intelligence
+            </h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-1">

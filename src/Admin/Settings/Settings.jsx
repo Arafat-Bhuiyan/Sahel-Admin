@@ -100,7 +100,7 @@ export default function TermsAndPolicies() {
               onClick={() => handleTabChange("general")}
               className={`pb-3 font-semibold transition-colors ${
                 activeTab === "general"
-                  ? "text-[#2A98FF] border-b-2 border-[#2A98FF]"
+                  ? "text-black border-b-2 border-black"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -110,7 +110,7 @@ export default function TermsAndPolicies() {
               onClick={() => handleTabChange("terms")}
               className={`pb-3 font-semibold transition-colors ${
                 activeTab === "terms"
-                  ? "text-[#2A98FF] border-b-2 border-[#2A98FF]"
+                  ? "text-black border-b-2 border-black"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -120,7 +120,7 @@ export default function TermsAndPolicies() {
               onClick={() => handleTabChange("privacy")}
               className={`pb-3 font-semibold transition-colors ${
                 activeTab === "privacy"
-                  ? "text-[#2A98FF] border-b-2 border-[#2A98FF]"
+                  ? "text-black border-b-2 border-black"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -131,7 +131,7 @@ export default function TermsAndPolicies() {
           {!isEditing && activeTab !== "general" && (
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-[#2A98FF] text-white font-semibold rounded hover:bg-[#0b85f7] transition-colors"
+              className="px-4 py-2 bg-cyan-900 text-white font-semibold rounded hover:bg-cyan-800 transition-colors"
             >
               Edit
             </button>
@@ -237,7 +237,7 @@ export default function TermsAndPolicies() {
                 <div className="flex gap-3 mt-4">
                   <button
                     onClick={handleSaveEdit}
-                    className="px-6 py-2 bg-[#2A98FF] text-white font-semibold rounded hover:bg-[#0b85f7] transition-colors"
+                    className="px-6 py-2 bg-cyan-900 text-white font-semibold rounded hover:bg-cyan-800 transition-colors"
                   >
                     Save
                   </button>

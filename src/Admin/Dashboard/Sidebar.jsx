@@ -1,13 +1,13 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
+  LogOut,
+  LayoutDashboard,
+  Grid2x2Plus,
+  Briefcase,
   Users,
   Settings,
-  Briefcase,
-  LayoutDashboard,
-  Truck,
-  Grid2x2Plus,
-  LogOut,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import logo from "@/assets/img/logo.png";
 import watermark from "@/assets/img/watermark.png";
 
@@ -78,7 +78,13 @@ export const Sidebar = ({ currentComponent, onMenuClick }) => {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-[#E2E2E2]">
-        <button className="w-full self-stretch px-3 py-2.5 rounded-2xl flex justify-start items-center gap-2 hover:bg-zinc-50 transition-colors">
+        <button
+          onClick={() => {
+            toast.success("Logged out successfully!");
+            navigate("/login");
+          }}
+          className="w-full self-stretch px-3 py-2.5 rounded-2xl flex justify-start items-center gap-2 hover:bg-zinc-50 transition-colors"
+        >
           <div className="inline-flex flex-col justify-start items-start">
             <div className="w-6 h-7 relative flex items-center justify-center">
               <LogOut className="w-4 h-4 text-black" />
