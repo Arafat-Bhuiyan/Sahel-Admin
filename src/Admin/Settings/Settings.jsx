@@ -19,9 +19,9 @@ export default function TermsAndPolicies() {
 <li>Scelerisque tellus praesent condimentum euismod a faucibus. Auctor at ultricies at urna aliquam massa pellentesque. Vitae vulputate nulla diam placerat m.</li>
 </ul>`,
     privacy: `<ul>
-<li><strong>Privacy policy</strong> content goes here. This section contains important information about how we handle your data and privacy.</li>
-<li>We are committed to protecting your personal information and respecting your privacy.</li>
-<li>All data is handled in accordance with applicable laws and regulations.</li>
+<li>Le contenu de la <strong>politique de confidentialité</strong> va ici. Cette section contient des informations importantes sur la façon dont nous traitons vos données et votre vie privée.</li>
+<li>Nous nous engageons à protéger vos informations personnelles et à respecter votre vie privée.</li>
+<li>Toutes les données sont traitées conformément aux lois et réglementations en vigueur.</li>
 </ul>`,
   });
 
@@ -104,7 +104,7 @@ export default function TermsAndPolicies() {
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
-              General
+              Général
             </button>
             <button
               onClick={() => handleTabChange("terms")}
@@ -114,7 +114,7 @@ export default function TermsAndPolicies() {
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
-              Terms & Conditions
+              Termes et Conditions
             </button>
             <button
               onClick={() => handleTabChange("privacy")}
@@ -124,7 +124,7 @@ export default function TermsAndPolicies() {
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
-              Privacy Policy
+              Politique de Confidentialité
             </button>
           </div>
 
@@ -133,7 +133,7 @@ export default function TermsAndPolicies() {
               onClick={() => setIsEditing(true)}
               className="px-4 py-2 bg-cyan-900 text-white font-semibold rounded hover:bg-cyan-800 transition-colors"
             >
-              Edit
+              Modifier
             </button>
           )}
         </div>
@@ -160,7 +160,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("bold")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Bold"
+              title="Gras"
             >
               <Bold size={16} />
             </button>
@@ -168,7 +168,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("italic")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Italic"
+              title="Italique"
             >
               <Italic size={16} />
             </button>
@@ -176,7 +176,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("underline")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Underline"
+              title="Souligné"
             >
               <Underline size={16} />
             </button>
@@ -186,7 +186,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("justifyLeft")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Align Left"
+              title="Aligner à gauche"
             >
               <AlignLeft size={16} />
             </button>
@@ -194,7 +194,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("justifyCenter")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Align Center"
+              title="Aligner au centre"
             >
               <AlignCenter size={16} />
             </button>
@@ -202,7 +202,7 @@ export default function TermsAndPolicies() {
             <button
               onClick={() => applyFormat("justifyRight")}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Align Right"
+              title="Aligner à droite"
             >
               <AlignRight size={16} />
             </button>
@@ -225,12 +225,12 @@ export default function TermsAndPolicies() {
                   dangerouslySetInnerHTML={{
                     __html: (editContent ?? content[activeTab] ?? "").replace(
                       /\n/g,
-                      "<br>"
+                      "<br>",
                     ),
                   }}
                   onBlur={(e) =>
                     setEditContent(
-                      e.currentTarget.innerHTML.replace(/<br>/g, "\n")
+                      e.currentTarget.innerHTML.replace(/<br>/g, "\n"),
                     )
                   }
                 />
@@ -239,13 +239,13 @@ export default function TermsAndPolicies() {
                     onClick={handleSaveEdit}
                     className="px-6 py-2 bg-cyan-900 text-white font-semibold rounded hover:bg-cyan-800 transition-colors"
                   >
-                    Save
+                    Enregistrer
                   </button>
                   <button
                     onClick={handleCancelEdit}
                     className="px-6 py-2 bg-gray-200 text-gray-900 font-semibold rounded hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Annuler
                   </button>
                 </div>
               </>

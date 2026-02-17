@@ -16,8 +16,11 @@ export default function General() {
   };
 
   const handleSave = () => {
-    console.log("Saving USSD Settings:", { isEnabled, ...formData });
-    toast.success("USSD Settings saved successfully!");
+    console.log("Enregistrement des paramètres USSD :", {
+      isEnabled,
+      ...formData,
+    });
+    toast.success("Paramètres USSD enregistrés avec succès !");
   };
 
   return (
@@ -31,10 +34,10 @@ export default function General() {
         </div>
         <div>
           <h2 className="text-neutral-950 text-xl font-semibold leading-tight">
-            USSD Service Configuration
+            Configuration du service USSD
           </h2>
           <p className="text-gray-500 text-base font-normal">
-            Configure USSD short code for subscriber registration
+            Configurer le code court USSD pour l'inscription des abonnés
           </p>
         </div>
       </div>
@@ -44,10 +47,10 @@ export default function General() {
         <div className="flex justify-between items-center py-2">
           <div className="flex flex-col">
             <h3 className="text-neutral-950 text-base font-normal leading-6">
-              Enable USSD Service
+              Activer le service USSD
             </h3>
             <p className="text-gray-500 text-sm font-normal">
-              Allow users to subscribe via USSD
+              Permettre aux utilisateurs de s'abonner via USSD
             </p>
           </div>
           <button
@@ -71,7 +74,7 @@ export default function General() {
           {/* Short Code */}
           <div className="flex flex-col gap-2">
             <label className="text-neutral-950 text-sm font-normal">
-              USSD Short Code
+              Code court USSD
             </label>
             <input
               type="text"
@@ -79,17 +82,18 @@ export default function General() {
               value={formData.shortCode}
               onChange={handleInputChange}
               className="w-full h-11 px-4 bg-zinc-100 rounded-lg outline-none text-gray-600 text-sm border-none"
-              placeholder="e.g. *384*123#"
+              placeholder="par ex. *384*123#"
             />
             <p className="text-gray-500 text-xs font-normal">
-              Users will dial this code to access the job service
+              Les utilisateurs composeront ce code pour accéder au service
+              d'emploi
             </p>
           </div>
 
           {/* Provider */}
           <div className="flex flex-col gap-2">
             <label className="text-neutral-950 text-sm font-normal">
-              USSD Provider
+              Fournisseur USSD
             </label>
             <div className="relative">
               <input
@@ -106,7 +110,7 @@ export default function General() {
           {/* API Key */}
           <div className="flex flex-col gap-2">
             <label className="text-neutral-950 text-sm font-normal">
-              API Key
+              Clé API
             </label>
             <input
               type="password"
@@ -114,7 +118,7 @@ export default function General() {
               value={formData.apiKey}
               onChange={handleInputChange}
               className="w-full h-11 px-4 bg-zinc-100 rounded-lg outline-none text-gray-600 text-sm border-none"
-              placeholder="Enter your USSD API key"
+              placeholder="Entrez votre clé API USSD"
             />
           </div>
         </div>
@@ -126,7 +130,7 @@ export default function General() {
             className="h-12 px-6 bg-cyan-900 rounded-lg text-white text-base font-normal flex items-center gap-2 hover:bg-[#254d6e] transition-all shadow-sm"
           >
             <Save className="w-5 h-5" />
-            <span>Save USSD Settings</span>
+            <span>Enregistrer les paramètres USSD</span>
           </button>
         </div>
       </div>
