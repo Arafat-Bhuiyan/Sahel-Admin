@@ -10,24 +10,24 @@ export default function AdminLayout() {
   const location = useLocation();
 
   const title = location.pathname.startsWith(`/admin/category`)
-    ? "Category"
+    ? "Catégories"
     : location.pathname.startsWith(`/admin/job-management`)
-    ? "Job Management"
+    ? "Gestion des tâches"
     : location.pathname.startsWith(`/admin/subscriber`)
-    ? "Subscriber Management"
+    ? "Gestion des abonnés"
     : location.pathname.startsWith(`/admin/settings`)
-    ? "Settings"
-    : "Dashboard Overview";
+    ? "Paramètres"
+    : "Tableau de bord";
 
   const subtitle = location.pathname.startsWith(`/admin/category`)
-    ? "Create, edit, and manage job offers"
+    ? "Créer, modifier et gérer les catégories"
     : location.pathname.startsWith(`/admin/job-management`)
-    ? "Create, edit, and manage job offers"
+    ? "Créer, modifier et gérer les tâches"
     : location.pathname.startsWith(`/admin/subscriber`)
-    ? "Manage subscribers and send SMS campaigns"
+    ? "Gérer les abonnés et envoyer des campagnes SMS"
     : location.pathname.startsWith(`/admin/settings`)
-    ? "Configure system settings and integrations"
-    : "Welcome back! Here's what's happening today.";
+    ? "Configurer les paramètres du système et les intégrations"
+    : "Bienvenue! Voici ce qui se passe aujourd'hui.";
   return (
     <div
       style={{ fontFamily: "Montserrat" }}

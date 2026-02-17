@@ -24,17 +24,17 @@ ChartJS.register(
 const ChartsSection = () => {
   // Data for the bar chart
   const barChartData = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
     datasets: [
       {
-        label: "Sent",
+        label: "Envoyés",
         data: [400, 300, 500, 450, 580, 350, 250],
         backgroundColor: "#81BBAE",
         borderRadius: 0,
         barThickness: 44,
       },
       {
-        label: "Delivered",
+        label: "Delivrés",
         data: [390, 290, 490, 440, 570, 340, 240],
         backgroundColor: "#30618B",
         borderRadius: 0,
@@ -116,7 +116,7 @@ const ChartsSection = () => {
       <div className="bg-white rounded-2xl border border-black/10 p-6 flex flex-col gap-6">
         <div>
           <h3 className="text-zinc-900 text-base font-normal font-['Outfit'] leading-4">
-            SMS Performance (Last 7 Days)
+            Performances SMS (7 derniers jours)
           </h3>
         </div>
         <div className="h-80 w-full">

@@ -25,10 +25,10 @@ ChartJS.register(
 
 const SubscriberGrowth = () => {
   const lineChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr"],
+    labels: ["Lun", "Mar", "Mer", "Jeu"],
     datasets: [
       {
-        label: "Total Subscribers",
+        label: "Total des abonnés",
         data: [780, 950, 1100, 1250],
         borderColor: "#30618B",
         backgroundColor: "transparent",
@@ -112,7 +112,7 @@ const SubscriberGrowth = () => {
       <div className="bg-white rounded-xl border border-black/10 p-5 flex flex-col gap-6">
         <div>
           <h3 className="text-zinc-900 text-base font-normal font-['Outfit'] leading-4">
-            Subscriber Growth
+            Croissance des abonnés
           </h3>
         </div>
         <div className="h-64 w-full px-2">

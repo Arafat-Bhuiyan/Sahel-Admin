@@ -17,14 +17,14 @@ export const Sidebar = ({ currentComponent, onMenuClick }) => {
   const menuItems = [
     {
       icon: LayoutDashboard,
-      label: "Dashboard",
+      label: "Tableau de bord",
       active: true,
       slug: "dashboard",
     },
-    { icon: Grid2x2Plus, label: "Category", slug: "category" },
-    { icon: Briefcase, label: "Job Management", slug: "job-management" },
-    { icon: Users, label: "Subscriber Management", slug: "subscriber" },
-    { icon: Settings, label: "Settings", slug: "settings" },
+    { icon: Grid2x2Plus, label: "Catégories", slug: "category" },
+    { icon: Briefcase, label: "Gestion des tâches", slug: "job-management" },
+    { icon: Users, label: "Gestion des abonnés", slug: "subscriber" },
+    { icon: Settings, label: "Paramètres", slug: "settings" },
   ];
   const location = useLocation();
 
@@ -92,7 +92,7 @@ export const Sidebar = ({ currentComponent, onMenuClick }) => {
           </div>
           <div className="inline-flex flex-col justify-start items-start text-start">
             <div className="justify-center text-black text-sm font-medium leading-5">
-              Log Out
+              Déconnexion
             </div>
           </div>
         </button>

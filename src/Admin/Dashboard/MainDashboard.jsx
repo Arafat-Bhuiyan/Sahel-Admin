@@ -5,25 +5,25 @@ import SubscriberGrowth from "./SubscriberGrowth";
 
 const cards = [
   {
-    title: "Total Job Offers",
+    title: "Offres d'emploi totales",
     number: "342",
     icon: Briefcase,
     iconColor: "#FFFFFF",
   },
   {
-    title: "Active Subscribers",
+    title: "Abonnés actifs",
     number: "12475",
     icon: Users,
     iconColor: "#FFFFFF",
   },
   {
-    title: "SMS Sent (today)",
+    title: "SMS  envoyés (aujourd'hui)",
     number: "3456",
     icon: Send,
     iconColor: "#FFFFFF",
   },
   {
-    title: "Total SMS",
+    title: "SMS totaux ",
     number: "9800",
     icon: MessageSquare,
     iconColor: "#FFFFFF",
