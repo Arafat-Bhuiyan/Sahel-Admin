@@ -53,11 +53,11 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
               {/* Category Name */}
               <div className="flex flex-col gap-3">
                 <label className="text-neutral-950 text-lg font-normal font-['Outfit'] leading-3">
-                  Category Name
+                  Nom de la catégorie
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. IT & Technology"
+                  placeholder="par ex. Informatique et Technologie"
                   className="w-full h-16 px-4 rounded-[10px] border-2 border-gray-300 focus:border-[#30618B] outline-none font-['Outfit'] transition-all"
                   value={formData.title}
                   onChange={(e) =>
@@ -69,7 +69,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
               {/* Upload Icon */}
               <div className="flex flex-col gap-3">
                 <label className="text-neutral-950 text-lg font-normal font-['Outfit'] leading-3">
-                  Upload Icon/Image
+                  Télécharger une icône/image
                 </label>
                 <label className="w-full h-16 rounded-[10px] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-zinc-50 transition-all overflow-hidden relative">
                   {preview ? (
@@ -94,10 +94,10 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
             {/* Sub Category Name */}
             <div className="flex flex-col gap-3">
               <label className="text-neutral-950 text-lg font-normal font-['Outfit'] leading-3">
-                Sub Category Name
+                Nom de la sous-catégorie
               </label>
               <textarea
-                placeholder="Builder, Electrician, Plumber"
+                placeholder="Constructeur, Électricien, Plombier"
                 className="w-full h-20 p-4 rounded-[10px] border-2 border-gray-300 focus:border-[#30618B] outline-none font-['Outfit'] transition-all resize-none"
                 value={formData.description}
                 onChange={(e) =>
@@ -113,13 +113,15 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
                 onClick={onClose}
                 className="flex-1 h-12 rounded-[10px] border-2 border-red-600 text-red-600 text-xl font-medium font-['Outfit'] hover:bg-red-50 transition-colors"
               >
-                Cancel
+                Annuler
               </button>
               <button
                 type="submit"
                 className="flex-1 h-12 rounded-[10px] bg-[#1a3a5a] text-rose-50 text-xl font-medium font-['Outfit'] hover:bg-[#152e47] transition-colors shadow-md"
               >
-                {editData ? "Save Changes" : "Add Category"}
+                {editData
+                  ? "Sauvegarder les modifications"
+                  : "Ajouter une catégorie"}
               </button>
             </div>
           </form>

@@ -20,26 +20,26 @@ const Category = () => {
   const [categories, setCategories] = useState([
     {
       id: 1,
-      title: "Construction & Labor",
-      description: "Builder, Electrician, Plumber",
+      title: "Construction et main d'œuvre",
+      description: "Constructeur, Électricien, Plombier",
       icon: HardHat,
     },
     {
       id: 2,
-      title: "Security & Safety",
-      description: "Guard, Security Officer",
+      title: "Sécurité et Sûreté",
+      description: "Garde, Agent de sécurité",
       icon: ShieldCheck,
     },
     {
       id: 3,
-      title: "Customer Service",
-      description: "Call Center, Support",
+      title: "Service client",
+      description: "Centre d'appels, Support",
       icon: Headset,
     },
     {
       id: 4,
-      title: "Manufacturing",
-      description: "Machine Operator, Assembly",
+      title: "Fabrication",
+      description: "Opérateur de machine, Assemblage",
       icon: Settings,
     },
   ]);
@@ -62,7 +62,7 @@ const Category = () => {
           cat.id === editCategory.id ? { ...cat, ...data } : cat,
         ),
       );
-      toast.success("Category updated successfully!");
+      toast.success("Catégorie mise à jour avec succès !");
     } else {
       // Add new
       const newCategory = {
@@ -71,7 +71,7 @@ const Category = () => {
         icon: data.icon || Layers, // Use uploaded icon or fallback to Layers
       };
       setCategories([...categories, newCategory]);
-      toast.success("Category added successfully!");
+      toast.success("Catégorie ajoutée avec succès !");
     }
     handleCloseModal();
   };
@@ -81,24 +81,24 @@ const Category = () => {
       (t) => (
         <div className="flex flex-col gap-3 p-1">
           <p className="text-sm font-medium text-gray-900 font-['Outfit']">
-            Are you sure you want to delete this category?
+            Êtes-vous sûr de vouloir supprimer cette catégorie ?
           </p>
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => toast.dismiss(t.id)}
               className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
             >
-              Cancel
+              Annuler
             </button>
             <button
               onClick={() => {
                 setCategories(categories.filter((c) => c.id !== id));
                 toast.dismiss(t.id);
-                toast.success("Category deleted successfully!");
+                toast.success("Catégorie supprimée avec succès !");
               }}
               className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
             >
-              Confirm
+              Confirmer
             </button>
           </div>
         </div>
@@ -120,7 +120,7 @@ const Category = () => {
         >
           <Plus className="w-5 h-5" />
           <span className="text-base font-medium font-['Outfit']">
-            Add New Category
+            Ajouter une nouvelle catégorie
           </span>
         </button>
       </div>

@@ -38,19 +38,19 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-1">
             <div>
-              <label className="text-xs text-white">Email Address</label>
+              <label className="text-xs text-white">Adresse email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Entrez votre email"
                 className="mt-2 w-full bg-transparent border border-[#3a3a3a] rounded px-3 py-2 text-white"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-white">Password</label>
+              <label className="text-xs text-white">Mot de passe</label>
               <div className="relative mt-2">
                 <input
                   type={show ? "text" : "password"}
@@ -78,7 +78,7 @@ export default function Login() {
                 type="submit"
                 className="w-full bg-white text-black rounded py-2 mt-3 font-bold"
               >
-                Log in
+                Se connecter
               </button>
             </div>
           </form>
