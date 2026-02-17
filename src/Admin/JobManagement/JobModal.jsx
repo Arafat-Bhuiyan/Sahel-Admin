@@ -37,7 +37,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
       ...editData, // Keep existing fields like ID and Status if editing
       ...formData,
       id: editData ? editData.id : Date.now(),
-      status: editData ? editData.status : "Published",
+      status: editData ? editData.status : "Publié",
     });
 
     onClose();
@@ -51,7 +51,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
         {/* Header */}
         <div className="pt-10 pb-6 text-center">
           <h2 className="text-neutral-950 text-2xl font-semibold">
-            {editData ? "Edit Job" : "Add New Job"}
+            {editData ? "Modifier l'offre" : "Ajouter un nouvel emploi"}
           </h2>
         </div>
 
@@ -59,7 +59,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
         <form onSubmit={handleSubmit} className="px-8 flex flex-col gap-6">
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Company Name
+              Nom de l'entreprise
             </label>
             <input
               type="text"
@@ -73,7 +73,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
 
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Job Title
+              Titre du poste
             </label>
             <input
               type="text"
@@ -87,7 +87,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
 
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Add Category
+              Ajouter une catégorie
             </label>
             <input
               type="text"
@@ -101,7 +101,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
 
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Short Description
+              Brève description
             </label>
             <input
               type="text"
@@ -115,7 +115,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
 
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Add your Link
+              Ajouter un lien
             </label>
             <input
               type="text"
@@ -135,13 +135,13 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
               onClick={onClose}
               className="w-full h-12 bg-white rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-red-600 text-red-600 text-xl font-medium hover:bg-red-50 transition-colors shadow-sm"
             >
-              Cancel
+              Annuler
             </button>
             <button
               type="submit"
               className="w-full h-12 bg-cyan-900 rounded-[10px] text-rose-50 text-xl font-medium shadow-md hover:bg-cyan-950 transition-colors"
             >
-              {editData ? "Save Changes" : "Add Job"}
+              {editData ? "Sauvegarder les modifications" : "Ajouter l'emploi"}
             </button>
           </div>
         </form>

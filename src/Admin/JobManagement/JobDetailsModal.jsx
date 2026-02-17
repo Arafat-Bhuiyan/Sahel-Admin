@@ -9,7 +9,9 @@ const JobDetailsModal = ({ isOpen, onClose, job }) => {
       <div className="bg-white rounded-[10px] shadow-2xl w-full max-w-[768px] overflow-hidden border border-gray-300 relative animate-in fade-in zoom-in duration-200">
         {/* Header */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-gray-200 bg-white">
-          <h2 className="text-[#1a3a5a] text-2xl font-bold">Job Details</h2>
+          <h2 className="text-[#1a3a5a] text-2xl font-bold">
+            Détails de l'offre
+          </h2>
           <div className="flex items-center gap-4">
             <button
               onClick={onClose}
@@ -38,17 +40,19 @@ const JobDetailsModal = ({ isOpen, onClose, job }) => {
           {/* Job Description */}
           <div className="flex flex-col gap-3">
             <h3 className="text-[#1a3a5a] text-lg font-bold">
-              Job Description
+              Description du poste
             </h3>
             <p className="text-gray-700 text-base font-normal leading-relaxed">
               {job.description ||
-                "Join our compassionate healthcare team providing quality patient care in a fast-paced hospital environment. We are seeking dedicated nurses who are committed to excellence in patient care and clinical practice."}
+                "Rejoignez notre équipe de santé compatissante fournissant des soins de qualité aux patients dans un environnement hospitalier dynamique."}
             </p>
           </div>
 
           {/* Job Link */}
           <div className="flex flex-col gap-3">
-            <h3 className="text-[#1a3a5a] text-lg font-bold">Job Link</h3>
+            <h3 className="text-[#1a3a5a] text-lg font-bold">
+              Lien de l'offre
+            </h3>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-slate-400 rounded-full" />
               <a
