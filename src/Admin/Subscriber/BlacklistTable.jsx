@@ -6,7 +6,7 @@ const BlacklistTable = ({ blacklistedSubscribers, onDelete }) => {
     <div className="bg-white rounded-2xl border border-cyan-900/20 shadow-sm overflow-hidden pb-4">
       <div className="p-6 border-b border-cyan-900/10">
         <h2 className="text-cyan-900 text-base font-normal">
-          All Blacklist ({blacklistedSubscribers.length})
+          Toute la liste noire ({blacklistedSubscribers.length})
         </h2>
       </div>
 
@@ -21,10 +21,10 @@ const BlacklistTable = ({ blacklistedSubscribers, onDelete }) => {
                 />
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Name
+                Nom
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Phone
+                Téléphone
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-right">
                 Actions

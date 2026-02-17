@@ -9,7 +9,7 @@ const initialSubscriberData = [
     id: 1,
     name: "John Mwangi",
     phone: "+254712345678",
-    preferences: ["IT/Technology", "Finance"],
+    preferences: ["Informatique/Technologie", "Finance"],
     status: "subscribed",
     subscribedDate: "2026-01-15",
     lastSMSDate: "2026-02-04",
@@ -18,7 +18,7 @@ const initialSubscriberData = [
     id: 2,
     name: "Mary Wanjiru",
     phone: "+254723456789",
-    preferences: ["Healthcare", "Education"],
+    preferences: ["Santé", "Éducation"],
     status: "subscribed",
     subscribedDate: "2026-01-20",
     lastSMSDate: "2026-02-03",
@@ -36,7 +36,7 @@ const initialSubscriberData = [
     id: 4,
     name: "Grace Akinyi",
     phone: "+254745678901",
-    preferences: ["Hospitality", "IT/Technology"],
+    preferences: ["Hôtellerie", "Informatique/Technologie"],
     status: "subscribed",
     subscribedDate: "2026-02-01",
     lastSMSDate: "2026-02-05",
@@ -63,7 +63,7 @@ const initialSubscriberData = [
     id: 7,
     name: "Bob Kariuki",
     phone: "+254733444555",
-    preferences: ["Energy"],
+    preferences: ["Énergie"],
     status: "blacklist",
     subscribedDate: "2025-09-20",
     lastSMSDate: "2025-10-10",
@@ -72,7 +72,7 @@ const initialSubscriberData = [
     id: 8,
     name: "Catherine Njeri",
     phone: "+254755666777",
-    preferences: ["Retail"],
+    preferences: ["Vente au détail"],
     status: "blacklist",
     subscribedDate: "2025-08-15",
     lastSMSDate: "2025-09-05",
@@ -80,10 +80,10 @@ const initialSubscriberData = [
 ];
 
 const Subscriber = () => {
-  const [activeTab, setActiveTab] = useState("Subscribers");
+  const [activeTab, setActiveTab] = useState("Abonnés");
   const [subscribers, setSubscribers] = useState(initialSubscriberData);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState("Tous les statuts");
   const [searchQuery, setSearchQuery] = useState("");
 
   const unsubscribedCount = subscribers.filter(
@@ -116,12 +116,17 @@ const Subscriber = () => {
         sub.id === id ? { ...sub, status: newStatus } : sub,
       ),
     );
-    toast.success(`Subscriber marked as ${newStatus}`);
+    const statusTranslate = {
+      subscribed: "abonné",
+      unsubscribed: "désabonné",
+      blacklist: "liste noire",
+    };
+    toast.success(`Abonné marqué comme ${statusTranslate[newStatus]}`);
   };
 
   const handleDeleteBlacklist = (id) => {
     setSubscribers(subscribers.filter((sub) => sub.id !== id));
-    toast.success("Subscriber removed from blacklist");
+    toast.success("Abonné retiré de la liste noire");
   };
 
   const getFilteredSubscribers = () => {
@@ -130,8 +135,9 @@ const Subscriber = () => {
         sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         sub.phone.includes(searchQuery);
       const matchesStatus =
-        statusFilter === "All Status" ||
-        sub.status.toLowerCase() === statusFilter.toLowerCase();
+        statusFilter === "Tous les statuts" ||
+        (statusFilter === "Abonnés" && sub.status === "subscribed") ||
+        (statusFilter === "Désabonnés" && sub.status === "unsubscribed");
       const isNotBlacklistedInMainView = sub.status !== "blacklist";
       return matchesSearch && matchesStatus && isNotBlacklistedInMainView;
     });
@@ -152,14 +158,14 @@ const Subscriber = () => {
       <div className="flex justify-end items-center w-full">
         <div className="flex gap-2">
           <button className="h-9 px-4 bg-gray-50 rounded-lg border border-cyan-900/20 text-cyan-900 text-sm font-normal hover:bg-gray-100 transition-colors">
-            Unsubscribed({unsubscribedCount})
+            Désabonnés ({unsubscribedCount})
           </button>
           <button className="h-9 px-4 bg-gray-50 rounded-lg border border-cyan-900/20 text-cyan-900 text-sm font-normal hover:bg-gray-100 transition-colors">
-            Blacklist({blacklistCount})
+            Liste noire ({blacklistCount})
           </button>
           <button className="h-9 px-4 bg-[#30618B] rounded-lg text-white text-sm font-normal flex items-center gap-2 hover:bg-[#254d6e] transition-colors">
             <Send className="w-4 h-4" />
-            Send SMS ({selectedIds.length})
+            Envoyer SMS ({selectedIds.length})
           </button>
         </div>
       </div>
@@ -171,7 +177,7 @@ const Subscriber = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by name or phone..."
+              placeholder="Rechercher par nom ou téléphone..."
               className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-lg outline-none text-slate-600 text-base"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -183,9 +189,9 @@ const Subscriber = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="appearance-none w-48 px-8 py-2 bg-slate-100 rounded-lg text-cyan-900 text-sm outline-none cursor-pointer focus:ring-1 focus:ring-cyan-900/20"
             >
-              <option value="All Status">All Status</option>
-              <option value="Subscribed">Subscribed</option>
-              <option value="Unsubscribed">Unsubscribed</option>
+              <option value="Tous les statuts">Tous les statuts</option>
+              <option value="Abonnés">Abonnés</option>
+              <option value="Désabonnés">Désabonnés</option>
             </select>
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 opacity-50 pointer-events-none" />
@@ -195,7 +201,7 @@ const Subscriber = () => {
 
       {/* Tabs */}
       <div className="flex gap-4 border-b border-neutral-200">
-        {["Subscribers", "Blacklist"].map((tab) => (
+        {["Abonnés", "Liste noire"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -211,7 +217,7 @@ const Subscriber = () => {
       </div>
 
       {/* Table Section */}
-      {activeTab === "Subscribers" ? (
+      {activeTab === "Abonnés" ? (
         <SubscriberTable
           subscribers={getFilteredSubscribers()}
           selectedIds={selectedIds}

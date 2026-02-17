@@ -12,7 +12,7 @@ const SubscriberTable = ({
     <div className="bg-white rounded-2xl border border-cyan-900/20 shadow-sm overflow-hidden pb-4 text-start">
       <div className="p-6 border-b border-cyan-900/10">
         <h2 className="text-cyan-900 text-base font-normal">
-          All Subscribers ({subscribers.length})
+          Tous les abonnés ({subscribers.length})
         </h2>
       </div>
 
@@ -32,22 +32,22 @@ const SubscriberTable = ({
                 />
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Name
+                Nom
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Phone
+                Téléphone
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Preferences
+                Préférences
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Status
+                Statut
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Subscribed Date
+                Date d'abonnement
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Last SMS
+                Dernier SMS
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
                 Actions
@@ -90,7 +90,11 @@ const SubscriberTable = ({
                         : "bg-red-100 text-red-700 font-medium"
                     }`}
                   >
-                    {sub.status}
+                    {sub.status === "subscribed"
+                      ? "abonné"
+                      : sub.status === "unsubscribed"
+                        ? "désabonné"
+                        : "liste noire"}
                   </span>
                 </td>
                 <td className="px-4 py-4 text-cyan-900 text-sm">
@@ -106,9 +110,9 @@ const SubscriberTable = ({
                       onChange={(e) => onStatusChange(sub.id, e.target.value)}
                       className="appearance-none w-32 px-3 py-1.5 bg-slate-100 rounded-lg text-cyan-900 text-xs outline-none cursor-pointer focus:ring-1 focus:ring-cyan-900/20"
                     >
-                      <option value="subscribed">Subscribed</option>
-                      <option value="unsubscribed">Unsubscribed</option>
-                      <option value="blacklist">Blacklist</option>
+                      <option value="subscribed">Abonné</option>
+                      <option value="unsubscribed">Désabonné</option>
+                      <option value="blacklist">Liste noire</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 pointer-events-none opacity-50" />
                   </div>
