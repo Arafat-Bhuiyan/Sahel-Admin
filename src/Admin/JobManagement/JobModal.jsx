@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
+import { initialCategories } from "../Category/categoryData";
 
 const JobModal = ({ isOpen, onClose, onSave, editData }) => {
   const [formData, setFormData] = useState({
     company: "",
     title: "",
+    location: "",
     category: "",
     description: "",
     link: "",
@@ -14,6 +17,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
       setFormData({
         company: editData.company || "",
         title: editData.title || "",
+        location: editData.location || "",
         category: editData.category || "",
         description: editData.description || "",
         link: editData.link || "",
@@ -22,6 +26,7 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
       setFormData({
         company: "",
         title: "",
+        location: "",
         category: "",
         description: "",
         link: "",
@@ -85,18 +90,45 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             />
           </div>
 
+          {/* Location */}
           <div className="flex flex-col gap-2.5">
             <label className="text-neutral-950 text-xl font-normal leading-3">
-              Ajouter une catégorie
+              Emplacement
             </label>
             <input
               type="text"
+              placeholder="e.g. Dakar, Sénégal"
               className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent"
-              value={formData.category}
+              value={formData.location}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
+                setFormData({ ...formData, location: e.target.value })
               }
             />
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <label className="text-neutral-950 text-xl font-normal leading-3">
+              Catégorie
+            </label>
+            <div className="relative">
+              <select
+                className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent appearance-none cursor-pointer"
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+              >
+                <option value="" disabled>
+                  Sélectionnez une catégorie
+                </option>
+                {initialCategories.map((cat) => (
+                  <option key={cat.id} value={cat.title}>
+                    {cat.title}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 pointer-events-none" />
+            </div>
           </div>
 
           <div className="flex flex-col gap-2.5">

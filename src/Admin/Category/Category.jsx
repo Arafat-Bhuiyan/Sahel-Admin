@@ -13,36 +13,12 @@ import {
 } from "lucide-react";
 import CategoryModal from "./CategoryModal";
 import toast from "react-hot-toast";
+import { initialCategories } from "./categoryData";
 
 const Category = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      title: "Construction et main d'œuvre",
-      description: "Constructeur, Électricien, Plombier",
-      icon: HardHat,
-    },
-    {
-      id: 2,
-      title: "Sécurité et Sûreté",
-      description: "Garde, Agent de sécurité",
-      icon: ShieldCheck,
-    },
-    {
-      id: 3,
-      title: "Service client",
-      description: "Centre d'appels, Support",
-      icon: Headset,
-    },
-    {
-      id: 4,
-      title: "Fabrication",
-      description: "Opérateur de machine, Assemblage",
-      icon: Settings,
-    },
-  ]);
+  const [categories, setCategories] = useState(initialCategories);
 
   const handleOpenModal = (category = null) => {
     setEditCategory(category);
