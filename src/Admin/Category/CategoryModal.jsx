@@ -1,25 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { Upload, X } from "lucide-react";
+import { Upload } from "lucide-react";
+import {
+  useAddCategoryMutation,
+  useUpdateCategoryMutation,
+} from "../../Redux/api/authApi";
+import toast from "react-hot-toast";
 
-const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
+const CategoryModal = ({ isOpen, onClose, editData }) => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    name: "",
+    sub_categories: "",
     icon: null,
   });
 
   const [preview, setPreview] = useState(null);
+  const [addCategory, { isLoading: isAdding }] = useAddCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateCategoryMutation();
+  const isLoading = isAdding || isUpdating;
 
   useEffect(() => {
     if (editData) {
       setFormData({
-        title: editData.title || "",
-        description: editData.description || "",
-        icon: editData.icon || null,
+        name: editData.name || "",
+        sub_categories: editData.sub_categories?.join(", ") || "",
+        icon: null,
       });
-      setPreview(typeof editData.icon === "string" ? editData.icon : null);
+      // Handle icon preview for existing categories
+      if (editData.icon) {
+        setPreview(
+          editData.icon.startsWith("http")
+            ? editData.icon
+            : `${import.meta.env.VITE_BASE_URL}${editData.icon}`,
+        );
+      } else {
+        setPreview(null);
+      }
     } else {
-      setFormData({ title: "", description: "", icon: null });
+      setFormData({ name: "", sub_categories: "", icon: null });
       setPreview(null);
     }
   }, [editData, isOpen]);
@@ -27,19 +45,74 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
   const handleIconChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setFormData({ ...formData, icon: file });
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
-        setFormData({ ...formData, icon: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description) return;
-    onSave(formData);
+    if (!formData.name) {
+      toast.error("Veuillez entrer le nom de la catégorie");
+      return;
+    }
+
+    const submitData = new FormData();
+    submitData.append("name", formData.name);
+
+    if (formData.sub_categories) {
+      // Split sub_categories by comma and create an array
+      const subCats = formData.sub_categories
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      // Append as a JSON string because the backend expects valid JSON
+      submitData.append("sub_categories", JSON.stringify(subCats));
+    }
+
+    if (formData.icon) {
+      submitData.append("icon", formData.icon);
+    }
+
+    try {
+      if (editData) {
+        await updateCategory({ id: editData.id, data: submitData }).unwrap();
+        toast.success("Catégorie mise à jour avec succès !");
+      } else {
+        await addCategory(submitData).unwrap();
+        toast.success("Catégorie ajoutée avec succès !");
+      }
+      onClose();
+    } catch (err) {
+      console.error("Category Submit Error:", err);
+      // Detailed error reporting to identify exactly what failed
+      const errorData = err?.data;
+      let errorMessage = "Une erreur est survenue";
+
+      if (errorData) {
+        if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else {
+          // Flatten field-specific errors (e.g., { "name": ["This field is required."] })
+          errorMessage = Object.entries(errorData)
+            .map(
+              ([field, msgs]) =>
+                `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`,
+            )
+            .join(" | ");
+        }
+      }
+      toast.error(errorMessage);
+    }
   };
 
   if (!isOpen) return null;
@@ -57,26 +130,27 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
                 </label>
                 <input
                   type="text"
-                  placeholder="par ex. Informatique et Technologie"
+                  placeholder="par ex. Informatique"
                   className="w-full h-16 px-4 rounded-[10px] border-2 border-gray-300 focus:border-[#30618B] outline-none font-['Outfit'] transition-all"
-                  value={formData.title}
+                  value={formData.name}
                   onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
+                    setFormData({ ...formData, name: e.target.value })
                   }
+                  required
                 />
               </div>
 
               {/* Upload Icon */}
               <div className="flex flex-col gap-3">
                 <label className="text-neutral-950 text-lg font-normal font-['Outfit'] leading-3">
-                  Télécharger une icône/image
+                  Télécharger une icône
                 </label>
                 <label className="w-full h-16 rounded-[10px] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-zinc-50 transition-all overflow-hidden relative">
                   {preview ? (
                     <img
                       src={preview}
                       alt="Icon Preview"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain p-2"
                     />
                   ) : (
                     <Upload className="w-6 h-6 text-gray-400" />
@@ -91,17 +165,17 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
               </div>
             </div>
 
-            {/* Sub Category Name */}
+            {/* Sub Categories */}
             <div className="flex flex-col gap-3">
               <label className="text-neutral-950 text-lg font-normal font-['Outfit'] leading-3">
-                Nom de la sous-catégorie
+                Sous-catégories (séparées par des virgules)
               </label>
               <textarea
-                placeholder="Constructeur, Électricien, Plombier"
+                placeholder="Frontend, Backend, Mobile"
                 className="w-full h-20 p-4 rounded-[10px] border-2 border-gray-300 focus:border-[#30618B] outline-none font-['Outfit'] transition-all resize-none"
-                value={formData.description}
+                value={formData.sub_categories}
                 onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                  setFormData({ ...formData, sub_categories: e.target.value })
                 }
               />
             </div>
@@ -111,17 +185,21 @@ const CategoryModal = ({ isOpen, onClose, onSave, editData }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 h-12 rounded-[10px] border-2 border-red-600 text-red-600 text-xl font-medium font-['Outfit'] hover:bg-red-50 transition-colors"
+                disabled={isLoading}
+                className="flex-1 h-12 rounded-[10px] border-2 border-red-600 text-red-600 text-xl font-medium font-['Outfit'] hover:bg-red-50 transition-colors disabled:opacity-50"
               >
                 Annuler
               </button>
               <button
                 type="submit"
-                className="flex-1 h-12 rounded-[10px] bg-[#1a3a5a] text-rose-50 text-xl font-medium font-['Outfit'] hover:bg-[#152e47] transition-colors shadow-md"
+                disabled={isLoading}
+                className="flex-1 h-12 rounded-[10px] bg-[#1a3a5a] text-rose-50 text-xl font-medium font-['Outfit'] hover:bg-[#152e47] transition-colors shadow-md disabled:opacity-50"
               >
-                {editData
-                  ? "Sauvegarder les modifications"
-                  : "Ajouter une catégorie"}
+                {isLoading
+                  ? "Chargement..."
+                  : editData
+                    ? "Sauvegarder"
+                    : "Ajouter une catégorie"}
               </button>
             </div>
           </form>

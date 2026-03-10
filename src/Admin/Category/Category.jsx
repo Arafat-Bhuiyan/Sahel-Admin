@@ -94,15 +94,24 @@ const Category = () => {
               className="bg-white rounded-2xl p-6 border border-neutral-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all h-52"
             >
               <div className="flex flex-col gap-2.5 text-start">
-                <div className="w-10 h-10 flex items-center justify-center">
-                  {cat.icon && typeof cat.icon === "string" ? (
+                <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
+                  {cat.icon ? (
                     <img
-                      src={cat.icon}
+                      src={
+                        cat.icon.startsWith("http")
+                          ? cat.icon
+                          : `${import.meta.env.VITE_BASE_URL}${cat.icon}`
+                      }
                       alt={cat.name}
-                      className="w-8 h-8 object-contain rounded-sm"
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          "https://via.placeholder.com/40?text=Icon";
+                      }}
                     />
                   ) : (
-                    <Icon className="w-8 h-8 text-[#30618B]" />
+                    <Layers className="w-8 h-8 text-[#30618B]" />
                   )}
                 </div>
                 <div className="overflow-hidden">
@@ -155,7 +164,6 @@ const Category = () => {
       <CategoryModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSave={handleSaveCategory}
         editData={editCategory}
       />
     </div>

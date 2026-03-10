@@ -23,6 +23,25 @@ export const authApi = api.injectEndpoints({
         url: "/api/v1/admin/categories/",
         method: "GET",
       }),
+      providesTags: ["Category"],
+    }),
+    // === Add New Category ===
+    addCategory: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/categories/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Category"],
+    }),
+    // === Edit Category ===
+    updateCategory: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/api/v1/admin/categories/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Category"],
     }),
   }),
 });
@@ -30,4 +49,6 @@ export const {
   useLoginMutation,
   useGetDashboardStatsQuery,
   useGetCategoriesQuery,
+  useAddCategoryMutation,
+  useUpdateCategoryMutation,
 } = authApi;
