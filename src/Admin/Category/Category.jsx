@@ -15,13 +15,17 @@ import CategoryModal from "./CategoryModal";
 import toast from "react-hot-toast";
 import { initialCategories } from "./categoryData";
 
-import { useGetCategoriesQuery } from "../../Redux/api/authApi";
+import {
+  useGetCategoriesQuery,
+  useDeleteCategoryMutation,
+} from "../../Redux/api/authApi";
 
 const Category = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
 
   const { data, isLoading, error } = useGetCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();
   const categories = data?.results || [];
 
   const handleOpenModal = (category = null) => {
@@ -41,8 +45,43 @@ const Category = () => {
   };
 
   const handleDelete = (id) => {
-    // API integration for Delete will go here
-    toast.success("Fonctionnalité à venir !");
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3 p-1">
+          <p className="text-sm font-medium text-gray-900 font-['Outfit']">
+            Êtes-vous sûr de vouloir supprimer cette catégorie ?
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await deleteCategory(id).unwrap();
+                  toast.success("Catégorie supprimée avec succès !");
+                } catch (err) {
+                  toast.error(
+                    err?.data?.message || "Erreur lors de la suppression",
+                  );
+                }
+              }}
+              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
+            >
+              Confirmer
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        duration: 5000,
+      },
+    );
   };
 
   if (isLoading) {

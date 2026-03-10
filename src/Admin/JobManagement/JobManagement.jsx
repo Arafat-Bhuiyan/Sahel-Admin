@@ -1,69 +1,20 @@
-import React, { useState } from "react";
-import {
-  Plus,
-  Search,
-  Filter,
-  Eye,
-  Trash2,
-  ChevronDown,
-  ExternalLink,
-  Edit3,
-} from "lucide-react";
-import JobDetailsModal from "./JobDetailsModal";
+import { useState } from "react";
+import { useGetJobsQuery } from "../../Redux/api/authApi";
+import { ChevronDown, Edit3, Eye, Filter, Plus, Search, Trash2 } from "lucide-react";
 import JobModal from "./JobModal";
+import JobDetailsModal from "./JobDetailsModal";
 import toast from "react-hot-toast";
 
-const jobsData = [
-  {
-    id: 1,
-    title: "Développeur Frontend Senior",
-    company: "Tech Corp",
-    category: "Développement",
-    link: "www.thhakjh.com",
-    status: "Publié",
-    description:
-      "Rejoignez notre équipe technologique innovante pour créer des applications web de pointe. Nous recherchons un développeur frontend senior expert en React, Tailwind CSS et JavaScript moderne.",
-  },
-  {
-    id: 2,
-    title: "Infirmier(ère) diplômé(e)",
-    company: "Centre Médical",
-    category: "Médical",
-    link: "www.thhakjh.com",
-    status: "Publié",
-    description:
-      "Rejoignez notre équipe de santé compatissante fournissant des soins de qualité aux patients dans un environnement hospitalier dynamique. Nous recherchons des infirmiers dévoués.",
-  },
-  {
-    id: 3,
-    title: "Superviseur de chantier",
-    company: "BuildCo Ltd",
-    category: "BTP",
-    link: "www.thhakjh.com",
-    status: "Brouillon",
-    description:
-      "Dirigez les activités de construction sur site et gérez les équipes pour garantir que les projets sont achevés en toute sécurité, dans les délais et respecter le budget.",
-  },
-  {
-    id: 4,
-    title: "Directeur d'hôtel",
-    company: "Grand Hotel",
-    category: "Hôtellerie",
-    link: "www.thhakjh.com",
-    status: "Publié",
-    description:
-      "Supervisez tous les aspects des opérations hôtelières, y compris le service aux clients, la gestion du personnel et la santé financière.",
-  },
-];
-
 const JobManagement = () => {
-  const [jobs, setJobs] = useState(jobsData);
+  const { data, isLoading, error } = useGetJobsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [editJob, setEditJob] = useState(null);
+
+  const jobs = data?.results || [];
 
   const handleViewDetails = (job) => {
     setSelectedJob(job);
@@ -81,62 +32,42 @@ const JobManagement = () => {
   };
 
   const handleSaveJob = (data) => {
-    if (editJob) {
-      setJobs(jobs.map((j) => (j.id === editJob.id ? { ...j, ...data } : j)));
-      toast.success("Offre d'emploi mise à jour avec succès !");
-    } else {
-      setJobs([data, ...jobs]);
-      toast.success("Nouvelle offre d'emploi ajoutée avec succès !");
-    }
+    // API integration for save/update will be handled in JobModal or here via mutation
+    toast.success("Fonctionnalité à venir !");
   };
 
   const handleDelete = (id) => {
-    toast(
-      (t) => (
-        <div className="flex flex-col gap-3 p-1">
-          <p className="text-sm font-medium text-gray-900 font-['Outfit']">
-            Êtes-vous sûr de vouloir supprimer cette offre ?
-          </p>
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={() => {
-                setJobs(jobs.filter((j) => j.id !== id));
-                toast.dismiss(t.id);
-                toast.success("Offre supprimée avec succès !");
-              }}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
-            >
-              Confirmer
-            </button>
-          </div>
-        </div>
-      ),
-      {
-        position: "top-center",
-        duration: 5000,
-      },
-    );
+    // API integration for delete
+    toast.success("Fonctionnalité à venir !");
   };
 
   const handleToggleStatus = (id) => {
-    setJobs(
-      jobs.map((job) =>
-        job.id === id
-          ? {
-              ...job,
-              status: job.status === "Publié" ? "Brouillon" : "Publié",
-            }
-          : job,
-      ),
-    );
-    toast.success("Statut mis à jour avec succès !");
+    // API integration for status toggle
+    toast.success("Statut mis à jour !");
   };
+
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company_location.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#30618B]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500 text-center p-10">
+        Une erreur est survenue lors du chargement des offres d'emploi.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen p-6 flex flex-col gap-8 font-['Outfit']">
@@ -176,7 +107,7 @@ const JobManagement = () => {
       <div className="bg-white rounded-xl border border-black/10 shadow-sm overflow-hidden">
         <div className="p-5 border-b border-black/10">
           <h2 className="text-neutral-950 text-lg font-normal">
-            Toutes les offres ({jobs.length})
+            Toutes les offres ({filteredJobs.length})
           </h2>
         </div>
 
@@ -205,42 +136,41 @@ const JobManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {jobs.map((job) => (
+              {filteredJobs.map((job) => (
                 <tr
                   key={job.id}
                   className="border-b border-black/5 hover:bg-zinc-50 transition-colors"
                 >
-                  <td className="px-6 py-4 text-neutral-600 text-sm">
+                  <td className="px-6 py-4 text-neutral-600 text-sm max-w-xs truncate">
                     {job.title}
                   </td>
                   <td className="px-6 py-4 text-neutral-600 text-sm">
-                    {job.company}
+                    {job.company_name}
                   </td>
                   <td className="px-6 py-4 text-neutral-600 text-sm">
-                    {job.category}
+                    {job.category_details?.name || "N/A"}
                   </td>
                   <td className="px-6 py-4">
                     <a
-                      href={`https://${job.link}`}
+                      href={job.company_website_address}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#30618B] text-sm hover:underline flex items-center gap-1"
+                      className="text-[#30618B] text-sm hover:underline flex items-center gap-1 max-w-[150px] truncate"
                     >
-                      {job.link}
+                      {job.company_website_address || "Lien"}
                     </a>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-3">
-                      {/* Status Toggle Badge */}
                       <button
                         onClick={() => handleToggleStatus(job.id)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-all hover:scale-105 active:scale-95 ${
-                          job.status === "Publié"
+                        className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-all hover:scale-105 active:scale-95 capitalize ${
+                          job.status === "published"
                             ? "bg-[#30618B] text-white shadow-sm"
                             : "bg-gray-100 text-zinc-900 border border-gray-200"
                         }`}
                       >
-                        {job.status}
+                        {job.status === "published" ? "Publié" : job.status}
                       </button>
                     </div>
                   </td>

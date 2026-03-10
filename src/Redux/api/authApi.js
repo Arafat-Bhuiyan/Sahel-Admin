@@ -43,6 +43,22 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Category"],
     }),
+    // === Delete Category ===
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/api/v1/admin/categories/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Category"],
+    }),
+    // === Get Job ===
+    getJobs: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/jobs/",
+        method: "GET",
+      }),
+      providesTags: ["Job"],
+    }),
   }),
 });
 export const {
@@ -51,4 +67,6 @@ export const {
   useGetCategoriesQuery,
   useAddCategoryMutation,
   useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+  useGetJobsQuery,
 } = authApi;
