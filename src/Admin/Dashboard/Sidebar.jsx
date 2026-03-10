@@ -10,9 +10,18 @@ import {
 import toast from "react-hot-toast";
 import logo from "@/assets/img/logo.png";
 import watermark from "@/assets/img/watermark.png";
+import { useDispatch } from "react-redux";
+import { logout } from "../../Redux/services/authSlice";
 
 export const Sidebar = ({ currentComponent, onMenuClick }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Logged out successfully!");
+    navigate("/login");
+  };
 
   const menuItems = [
     {
@@ -79,10 +88,7 @@ export const Sidebar = ({ currentComponent, onMenuClick }) => {
       {/* Logout Button */}
       <div className="p-4 border-t border-[#E2E2E2]">
         <button
-          onClick={() => {
-            toast.success("Logged out successfully!");
-            navigate("/login");
-          }}
+          onClick={handleLogout}
           className="w-full self-stretch px-3 py-2.5 rounded-2xl flex justify-start items-center gap-2 hover:bg-zinc-50 transition-colors"
         >
           <div className="inline-flex flex-col justify-start items-start">

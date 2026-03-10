@@ -3,86 +3,113 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import toast, { Toaster } from "react-hot-toast";
+import { useLoginMutation } from "../../Redux/api/authApi";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../Redux/services/authSlice";
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [show, setShow] = React.useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const demoEmail = "admin@gmail.com";
-    const demoPassword = "123";
+  // RTK Query mutation
+  const [login, { isLoading }] = useLoginMutation();
 
-    if (email === demoEmail && password === demoPassword) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Calling the login mutation with phone_number as key as per API requirement
+      const response = await login({
+        phone_number: email,
+        password: password,
+      }).unwrap();
+
+      // Dispatching setCredentials to save tokens and user info
+      dispatch(
+        setCredentials({
+          access: response.access,
+          refresh: response.refresh,
+          user: { email: email }, // Saving email as user info
+        }),
+      );
+
       toast.success("Login Successful!");
       navigate("/admin", { replace: true });
-    } else {
+    } catch (err) {
+      console.error("Login Error:", err);
       toast.error(
-        "Invalid email or password. Hint: admin@gmail.com / password123",
+        err?.data?.detail || err?.data?.message || "Invalid email or password.",
       );
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#100f0f]">
+    <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa]">
       <Toaster position="top-right" />
       <div className="w-full max-w-md p-8">
-        <div className="bg-[#201f1f] border border-[#333] rounded-md p-8 shadow-sm">
-          <div className="flex justify-center mb-6">
-            <h1 className="text-white logo-font font-bold text-2xl tracking-widest">
+        <div className="bg-white border border-[#e5e7eb] rounded-lg p-8 shadow-xl">
+          <div className="flex justify-center mb-8">
+            <h1 className="text-[#111827] font-bold text-2xl tracking-widest uppercase">
               Sahel Intelligence
             </h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-1">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-white">Adresse email</label>
+              <label className="text-[11px] font-semibold text-[#4b5563] uppercase tracking-wider">
+                Adresse email
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Entrez votre email"
-                className="mt-2 w-full bg-transparent border border-[#3a3a3a] rounded px-3 py-2 text-white"
+                placeholder="nom@exemple.com"
+                className="mt-1.5 w-full bg-[#fcfcfc] border border-[#d1d5db] rounded-md px-4 py-2.5 text-[#111827] focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none placeholder-gray-400"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-white">Mot de passe</label>
-              <div className="relative mt-2">
+              <label className="text-[11px] font-semibold text-[#4b5563] uppercase tracking-wider">
+                Mot de passe
+              </label>
+              <div className="relative mt-1.5">
                 <input
                   type={show ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="●●●●●●"
-                  className="w-full bg-transparent border border-[#3a3a3a] rounded px-3 py-2 text-white placeholder-gray-500"
+                  placeholder="••••••••"
+                  className="w-full bg-[#fcfcfc] border border-[#d1d5db] rounded-md px-4 py-2.5 text-[#111827] focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none placeholder-gray-400"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShow((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 "
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black transition-colors"
                   aria-label="Toggle password visibility"
                 >
-                  <span className="text-white">
-                    {show ? <FaEyeSlash /> : <FaEye />}
-                  </span>
+                  {show ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
-                className="w-full bg-white text-black rounded py-2 mt-3 font-bold"
+                disabled={isLoading}
+                className="w-full bg-[#111827] hover:bg-black text-white rounded-md py-3 font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-[0.98]"
               >
-                Se connecter
+                {isLoading ? "Chargement..." : "Se connecter"}
               </button>
             </div>
           </form>
         </div>
+        <p className="text-center mt-6 text-sm text-gray-500">
+          © {new Date().getFullYear()} Sahel Intelligence. Tous droits réservés.
+        </p>
       </div>
     </div>
   );
