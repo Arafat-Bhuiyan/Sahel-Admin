@@ -85,6 +85,45 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Job"],
     }),
+    // === Get Subscriber ===
+    getSubscribers: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/subscribers/",
+        method: "GET",
+      }),
+      providesTags: ["Subscriber"],
+    }),
+    // === Blacklist ===
+    getBlacklist: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/blacklist/",
+        method: "GET",
+      }),
+      providesTags: ["Blacklist"],
+    }),
+    addToBlacklist: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/blacklist/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Blacklist"],
+    }),
+    removeFromBlacklist: builder.mutation({
+      query: (id) => ({
+        url: `/api/v1/admin/blacklist/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Blacklist"],
+    }),
+    updateSubscriber: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/api/v1/admin/subscribers/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Subscriber", "Blacklist"],
+    }),
   }),
 });
 export const {
@@ -98,4 +137,9 @@ export const {
   useAddJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
+  useGetSubscribersQuery,
+  useGetBlacklistQuery,
+  useAddToBlacklistMutation,
+  useRemoveFromBlacklistMutation,
+  useUpdateSubscriberMutation,
 } = authApi;

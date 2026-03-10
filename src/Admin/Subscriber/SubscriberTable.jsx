@@ -43,9 +43,7 @@ const SubscriberTable = ({
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
                 Statut
               </th>
-              <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Date d'abonnement
-              </th>
+
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
                 Dernier SMS
               </th>
@@ -68,11 +66,15 @@ const SubscriberTable = ({
                     onChange={() => toggleSelect(sub.id)}
                   />
                 </td>
-                <td className="px-4 py-4 text-cyan-900 text-sm">{sub.name}</td>
-                <td className="px-4 py-4 text-cyan-900 text-sm">{sub.phone}</td>
+                <td className="px-4 py-4 text-cyan-900 text-sm">
+                  Abonné {sub.id}
+                </td>
+                <td className="px-4 py-4 text-cyan-900 text-sm">
+                  {sub.phone_number}
+                </td>
                 <td className="px-4 py-4">
-                  <div className="flex gap-2">
-                    {sub.preferences.map((pref, i) => (
+                  <div className="flex gap-2 flex-wrap">
+                    {sub.active_subscriptions?.map((pref, i) => (
                       <span
                         key={i}
                         className="px-2 py-0.5 rounded-lg border border-cyan-900/20 text-cyan-900 text-[10px] leading-4"
@@ -80,33 +82,37 @@ const SubscriberTable = ({
                         {pref}
                       </span>
                     ))}
+                    {sub.active_subscriptions?.length === 0 && (
+                      <span className="text-gray-400 text-[10px]">
+                        Aucune preference
+                      </span>
+                    )}
                   </div>
                 </td>
                 <td className="px-4 py-4">
                   <span
                     className={`px-3 py-1 rounded-lg text-[10px] leading-4 font-normal ${
-                      sub.status === "subscribed"
+                      sub.sms_notification_active
                         ? "bg-lime-700/10 text-lime-700 font-medium"
                         : "bg-red-100 text-red-700 font-medium"
                     }`}
                   >
-                    {sub.status === "subscribed"
-                      ? "abonné"
-                      : sub.status === "unsubscribed"
-                        ? "désabonné"
-                        : "liste noire"}
+                    {sub.sms_notification_active ? "abonné" : "désabonné"}
                   </span>
                 </td>
                 <td className="px-4 py-4 text-cyan-900 text-sm">
-                  {sub.subscribedDate}
-                </td>
-                <td className="px-4 py-4 text-cyan-900 text-sm">
-                  {sub.lastSMSDate}
+                  {sub.last_sms_sent
+                    ? new Date(sub.last_sms_sent).toLocaleDateString()
+                    : "Aucun"}
                 </td>
                 <td className="px-4 py-4">
                   <div className="relative group">
                     <select
-                      value={sub.status}
+                      value={
+                        sub.sms_notification_active
+                          ? "subscribed"
+                          : "unsubscribed"
+                      }
                       onChange={(e) => onStatusChange(sub.id, e.target.value)}
                       className="appearance-none w-32 px-3 py-1.5 bg-slate-100 rounded-lg text-cyan-900 text-xs outline-none cursor-pointer focus:ring-1 focus:ring-cyan-900/20"
                     >

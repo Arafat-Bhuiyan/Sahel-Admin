@@ -2,6 +2,7 @@ import React from "react";
 import { Trash2 } from "lucide-react";
 
 const BlacklistTable = ({ blacklistedSubscribers, onDelete }) => {
+  console.log(blacklistedSubscribers);
   return (
     <div className="bg-white rounded-2xl border border-cyan-900/20 shadow-sm overflow-hidden pb-4">
       <div className="p-6 border-b border-cyan-900/10">
@@ -19,9 +20,6 @@ const BlacklistTable = ({ blacklistedSubscribers, onDelete }) => {
                   type="checkbox"
                   className="w-4 h-4 bg-slate-100 rounded border-cyan-900/20 cursor-pointer"
                 />
-              </th>
-              <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
-                Nom
               </th>
               <th className="px-4 py-4 text-cyan-900 text-sm font-normal text-left">
                 Téléphone
@@ -43,8 +41,9 @@ const BlacklistTable = ({ blacklistedSubscribers, onDelete }) => {
                     className="w-4 h-4 bg-slate-100 rounded border-cyan-900/20 cursor-pointer"
                   />
                 </td>
-                <td className="px-4 py-4 text-cyan-900 text-sm">{sub.name}</td>
-                <td className="px-4 py-4 text-cyan-900 text-sm">{sub.phone}</td>
+                <td className="px-4 py-4 text-cyan-900 text-sm">
+                  {sub.phone_number}
+                </td>
                 <td className="px-4 py-4 text-right">
                   <button
                     onClick={() => onDelete(sub.id)}

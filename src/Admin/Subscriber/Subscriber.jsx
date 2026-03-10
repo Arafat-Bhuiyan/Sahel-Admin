@@ -2,96 +2,38 @@ import React, { useState } from "react";
 import { Search, Filter, Send, ChevronDown } from "lucide-react";
 import SubscriberTable from "./SubscriberTable";
 import BlacklistTable from "./BlacklistTable";
+import {
+  useGetSubscribersQuery,
+  useGetBlacklistQuery,
+  useRemoveFromBlacklistMutation,
+  useAddToBlacklistMutation,
+  useUpdateSubscriberMutation,
+} from "../../Redux/api/authApi";
 import toast from "react-hot-toast";
 
-const initialSubscriberData = [
-  {
-    id: 1,
-    name: "John Mwangi",
-    phone: "+254712345678",
-    preferences: ["Informatique/Technologie", "Finance"],
-    status: "subscribed",
-    subscribedDate: "2026-01-15",
-    lastSMSDate: "2026-02-04",
-  },
-  {
-    id: 2,
-    name: "Mary Wanjiru",
-    phone: "+254723456789",
-    preferences: ["Santé", "Éducation"],
-    status: "subscribed",
-    subscribedDate: "2026-01-20",
-    lastSMSDate: "2026-02-03",
-  },
-  {
-    id: 3,
-    name: "David Kamau",
-    phone: "+254734567890",
-    preferences: ["Construction"],
-    status: "unsubscribed",
-    subscribedDate: "2025-12-10",
-    lastSMSDate: "2026-01-15",
-  },
-  {
-    id: 4,
-    name: "Grace Akinyi",
-    phone: "+254745678901",
-    preferences: ["Hôtellerie", "Informatique/Technologie"],
-    status: "subscribed",
-    subscribedDate: "2026-02-01",
-    lastSMSDate: "2026-02-05",
-  },
-  {
-    id: 5,
-    name: "Peter Ochieng",
-    phone: "+254756789012",
-    preferences: ["Finance"],
-    status: "unsubscribed",
-    subscribedDate: "2025-11-05",
-    lastSMSDate: "2025-12-20",
-  },
-  {
-    id: 6,
-    name: "Alice Munene",
-    phone: "+254700111222",
-    preferences: ["Agriculture"],
-    status: "blacklist",
-    subscribedDate: "2025-10-01",
-    lastSMSDate: "2025-11-15",
-  },
-  {
-    id: 7,
-    name: "Bob Kariuki",
-    phone: "+254733444555",
-    preferences: ["Énergie"],
-    status: "blacklist",
-    subscribedDate: "2025-09-20",
-    lastSMSDate: "2025-10-10",
-  },
-  {
-    id: 8,
-    name: "Catherine Njeri",
-    phone: "+254755666777",
-    preferences: ["Vente au détail"],
-    status: "blacklist",
-    subscribedDate: "2025-08-15",
-    lastSMSDate: "2025-09-05",
-  },
-];
-
 const Subscriber = () => {
+  const {
+    data: subscribersData,
+    isLoading: subLoading,
+    isError: subError,
+  } = useGetSubscribersQuery();
+  const { data: blacklistData, isLoading: blLoading } = useGetBlacklistQuery();
+  const [removeFromBlacklist] = useRemoveFromBlacklistMutation();
+  const [addToBlacklist] = useAddToBlacklistMutation();
+  const [updateSubscriber] = useUpdateSubscriberMutation();
+
   const [activeTab, setActiveTab] = useState("Abonnés");
-  const [subscribers, setSubscribers] = useState(initialSubscriberData);
   const [selectedIds, setSelectedIds] = useState([]);
   const [statusFilter, setStatusFilter] = useState("Tous les statuts");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const subscribers = subscribersData?.results || [];
+  const blacklist = blacklistData?.results || [];
+
   const unsubscribedCount = subscribers.filter(
-    (s) => s.status === "unsubscribed",
+    (s) => !s.sms_notification_active,
   ).length;
-  const blacklistCount = subscribers.filter(
-    (s) => s.status === "blacklist",
-  ).length;
+  const blacklistCount = blacklist.length;
 
   const toggleSelectAll = () => {
     const reachableSubscribers = getFilteredSubscribers();
@@ -110,47 +52,122 @@ const Subscriber = () => {
     }
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    setSubscribers(
-      subscribers.map((sub) =>
-        sub.id === id ? { ...sub, status: newStatus } : sub,
-      ),
+  const handleStatusChange = async (id, newStatus) => {
+    // If setting to blacklist, we might use addToBlacklist instead
+    if (newStatus === "blacklist") {
+      const sub = subscribers.find((s) => s.id === id);
+      if (sub) {
+        try {
+          await addToBlacklist({ phone_number: sub.phone_number }).unwrap();
+          toast.success("Abonné ajouté à la liste noire");
+        } catch (err) {
+          toast.error("Erreur lors de l'ajout à la liste noire");
+        }
+      }
+      return;
+    }
+
+    const isActive = newStatus === "subscribed";
+    try {
+      await updateSubscriber({
+        id,
+        data: { sms_notification_active: isActive },
+      }).unwrap();
+
+      const statusTranslate = {
+        subscribed: "abonné",
+        unsubscribed: "désabonné",
+      };
+      toast.success(`Abonné marqué comme ${statusTranslate[newStatus]}`);
+    } catch (err) {
+      toast.error("Erreur lors de la mise à jour du statut");
+    }
+  };
+
+  const handleAddToBlacklist = async () => {
+    const phone = window.prompt(
+      "Entrez le numéro de téléphone à bloquer (+226...)",
     );
-    const statusTranslate = {
-      subscribed: "abonné",
-      unsubscribed: "désabonné",
-      blacklist: "liste noire",
-    };
-    toast.success(`Abonné marqué comme ${statusTranslate[newStatus]}`);
+    if (phone) {
+      try {
+        await addToBlacklist({ phone_number: phone }).unwrap();
+        toast.success("Numéro ajouté à la liste noire !");
+      } catch (err) {
+        toast.error(err?.data?.message || "Erreur lors de l'ajout");
+      }
+    }
   };
 
   const handleDeleteBlacklist = (id) => {
-    setSubscribers(subscribers.filter((sub) => sub.id !== id));
-    toast.success("Abonné retiré de la liste noire");
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3 p-1">
+          <p className="text-sm font-medium text-gray-900 font-['Outfit']">
+            Retirer ce numéro de la liste noire ?
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await removeFromBlacklist(id).unwrap();
+                  toast.success("Numéro retiré de la liste noire !");
+                } catch (err) {
+                  toast.error("Erreur lors de la suppression");
+                }
+              }}
+              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
+            >
+              Confirmer
+            </button>
+          </div>
+        </div>
+      ),
+      { position: "top-center" },
+    );
   };
 
   const getFilteredSubscribers = () => {
     return subscribers.filter((sub) => {
-      const matchesSearch =
-        sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sub.phone.includes(searchQuery);
+      const matchesSearch = sub.phone_number.includes(searchQuery);
       const matchesStatus =
         statusFilter === "Tous les statuts" ||
-        (statusFilter === "Abonnés" && sub.status === "subscribed") ||
-        (statusFilter === "Désabonnés" && sub.status === "unsubscribed");
+        (statusFilter === "Abonnés" && sub.sms_notification_active) ||
+        (statusFilter === "Désabonnés" && !sub.sms_notification_active);
+
       const isNotBlacklistedInMainView = sub.status !== "blacklist";
       return matchesSearch && matchesStatus && isNotBlacklistedInMainView;
     });
   };
 
   const getBlacklistedSubscribers = () => {
-    return subscribers.filter(
-      (sub) =>
-        sub.status === "blacklist" &&
-        (sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          sub.phone.includes(searchQuery)),
-    );
+    return blacklist.filter((sub) => sub.phone_number?.includes(searchQuery));
   };
+
+  const isLoading = subLoading || blLoading;
+  const isError = subError;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#30618B]"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-red-500 text-center p-10">
+        Une erreur est survenue lors du chargement des abonnés.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen p-6 flex flex-col gap-8 font-['Outfit'] text-start">
@@ -163,10 +180,19 @@ const Subscriber = () => {
           <button className="h-9 px-4 bg-gray-50 rounded-lg border border-cyan-900/20 text-cyan-900 text-sm font-normal hover:bg-gray-100 transition-colors">
             Liste noire ({blacklistCount})
           </button>
-          <button className="h-9 px-4 bg-[#30618B] rounded-lg text-white text-sm font-normal flex items-center gap-2 hover:bg-[#254d6e] transition-colors">
-            <Send className="w-4 h-4" />
-            Envoyer SMS ({selectedIds.length})
-          </button>
+          {activeTab === "Liste noire" ? (
+            <button
+              onClick={handleAddToBlacklist}
+              className="h-9 px-4 bg-red-600 rounded-lg text-white text-sm font-normal flex items-center gap-2 hover:bg-red-700 transition-colors"
+            >
+              Ajouter à la liste noire
+            </button>
+          ) : (
+            <button className="h-9 px-4 bg-[#30618B] rounded-lg text-white text-sm font-normal flex items-center gap-2 hover:bg-[#254d6e] transition-colors">
+              <Send className="w-4 h-4" />
+              Envoyer SMS ({selectedIds.length})
+            </button>
+          )}
         </div>
       </div>
 
