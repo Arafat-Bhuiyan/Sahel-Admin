@@ -1,51 +1,97 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  useAddJobMutation,
+  useUpdateJobMutation,
+  useGetCategoriesQuery,
+} from "../../Redux/api/authApi";
+import toast from "react-hot-toast";
 import { ChevronDown } from "lucide-react";
-import { initialCategories } from "../Category/categoryData";
 
-const JobModal = ({ isOpen, onClose, onSave, editData }) => {
+const JobModal = ({ isOpen, onClose, editData }) => {
   const [formData, setFormData] = useState({
-    company: "",
+    company_name: "",
     title: "",
-    location: "",
+    company_location: "",
     category: "",
     description: "",
-    link: "",
+    company_website_address: "",
+    contact: "",
+    status: "published",
   });
+
+  const { data: categoryData } = useGetCategoriesQuery();
+  const [addJob, { isLoading: isAdding }] = useAddJobMutation();
+  const [updateJob, { isLoading: isUpdating }] = useUpdateJobMutation();
+  const isLoading = isAdding || isUpdating;
+
+  const categories = categoryData?.results || [];
 
   useEffect(() => {
     if (editData && isOpen) {
       setFormData({
-        company: editData.company || "",
+        company_name: editData.company_name || "",
         title: editData.title || "",
-        location: editData.location || "",
+        company_location: editData.company_location || "",
         category: editData.category || "",
         description: editData.description || "",
-        link: editData.link || "",
+        company_website_address: editData.company_website_address || "",
+        contact: editData.contact || "",
+        status: editData.status || "published",
       });
     } else if (!editData && isOpen) {
       setFormData({
-        company: "",
+        company_name: "",
         title: "",
-        location: "",
+        company_location: "",
         category: "",
         description: "",
-        link: "",
+        company_website_address: "",
+        contact: "",
+        status: "published",
       });
     }
   }, [editData, isOpen]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.company || !formData.title || !formData.category) return;
+    if (!formData.company_name || !formData.title || !formData.category) {
+      toast.error("Veuillez remplir les champs obligatoires");
+      return;
+    }
 
-    onSave({
-      ...editData, // Keep existing fields like ID and Status if editing
-      ...formData,
-      id: editData ? editData.id : Date.now(),
-      status: editData ? editData.status : "Publié",
-    });
+    try {
+      if (editData) {
+        await updateJob({ id: editData.id, data: formData }).unwrap();
+        toast.success("Offre d'emploi mise à jour !");
+      } else {
+        await addJob(formData).unwrap();
+        toast.success("Offre d'emploi ajoutée !");
+      }
+      onClose();
+    } catch (err) {
+      console.error("Job Submit Error:", err);
+      const errorData = err?.data;
+      let errorMessage = "Une erreur est survenue";
 
-    onClose();
+      if (errorData) {
+        if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else {
+          // Flatten field-specific errors
+          errorMessage = Object.entries(errorData)
+            .map(
+              ([field, msgs]) =>
+                `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`,
+            )
+            .join(" | ");
+        }
+      }
+      toast.error(errorMessage);
+    }
   };
 
   if (!isOpen) return null;
@@ -68,11 +114,12 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             </label>
             <input
               type="text"
-              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent"
-              value={formData.company}
+              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent disabled:opacity-50"
+              value={formData.company_name}
               onChange={(e) =>
-                setFormData({ ...formData, company: e.target.value })
+                setFormData({ ...formData, company_name: e.target.value })
               }
+              disabled={isLoading}
             />
           </div>
 
@@ -82,11 +129,12 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             </label>
             <input
               type="text"
-              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent"
+              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent disabled:opacity-50"
               value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
+              disabled={isLoading}
             />
           </div>
 
@@ -98,11 +146,12 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             <input
               type="text"
               placeholder="e.g. Dakar, Sénégal"
-              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent"
-              value={formData.location}
+              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent disabled:opacity-50"
+              value={formData.company_location}
               onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
+                setFormData({ ...formData, company_location: e.target.value })
               }
+              disabled={isLoading}
             />
           </div>
 
@@ -112,18 +161,19 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             </label>
             <div className="relative">
               <select
-                className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent appearance-none cursor-pointer"
+                className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent appearance-none cursor-pointer disabled:opacity-50"
                 value={formData.category}
                 onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
+                  setFormData({ ...formData, category: Number(e.target.value) })
                 }
+                disabled={isLoading}
               >
                 <option value="" disabled>
                   Sélectionnez une catégorie
                 </option>
-                {initialCategories.map((cat) => (
-                  <option key={cat.id} value={cat.title}>
-                    {cat.title}
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
@@ -135,13 +185,13 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             <label className="text-neutral-950 text-xl font-normal leading-3">
               Brève description
             </label>
-            <input
-              type="text"
-              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent"
+            <textarea
+              className="w-full h-24 p-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent disabled:opacity-50 resize-none"
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
+              disabled={isLoading}
             />
           </div>
 
@@ -151,12 +201,32 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             </label>
             <input
               type="text"
-              placeholder="www.asdf.com"
-              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent text-cyan-900 text-2xl font-['Arimo']"
-              value={formData.link}
+              placeholder="https://www.asdf.com"
+              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent text-[#1a3a5a] text-xl disabled:opacity-50"
+              value={formData.company_website_address}
               onChange={(e) =>
-                setFormData({ ...formData, link: e.target.value })
+                setFormData({
+                  ...formData,
+                  company_website_address: e.target.value,
+                })
               }
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <label className="text-neutral-950 text-xl font-normal leading-3">
+              Contact
+            </label>
+            <input
+              type="text"
+              placeholder="+226..."
+              className="w-full h-16 px-4 rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-gray-300 focus:outline-[#30618B] transition-all bg-transparent disabled:opacity-50"
+              value={formData.contact}
+              onChange={(e) =>
+                setFormData({ ...formData, contact: e.target.value })
+              }
+              disabled={isLoading}
             />
           </div>
 
@@ -165,15 +235,21 @@ const JobModal = ({ isOpen, onClose, onSave, editData }) => {
             <button
               type="button"
               onClick={onClose}
-              className="w-full h-12 bg-white rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-red-600 text-red-600 text-xl font-medium hover:bg-red-50 transition-colors shadow-sm"
+              className="w-full h-12 bg-white rounded-[10px] outline outline-2 outline-offset-[-1.82px] outline-red-600 text-red-600 text-xl font-medium hover:bg-red-50 transition-colors shadow-sm disabled:opacity-50"
+              disabled={isLoading}
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="w-full h-12 bg-cyan-900 rounded-[10px] text-rose-50 text-xl font-medium shadow-md hover:bg-cyan-950 transition-colors"
+              className="w-full h-12 bg-[#1a3a5a] rounded-[10px] text-rose-50 text-xl font-medium shadow-md hover:bg-[#152e47] transition-colors disabled:opacity-50"
+              disabled={isLoading}
             >
-              {editData ? "Sauvegarder les modifications" : "Ajouter l'emploi"}
+              {isLoading
+                ? "Chargement..."
+                : editData
+                  ? "Sauvegarder"
+                  : "Ajouter l'emploi"}
             </button>
           </div>
         </form>

@@ -59,6 +59,32 @@ export const authApi = api.injectEndpoints({
       }),
       providesTags: ["Job"],
     }),
+    // === Add New Job ===
+    addJob: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/jobs/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+    // === Edit Job ===
+    updateJob: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/api/v1/admin/jobs/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+    // === Delete Job ===
+    deleteJob: builder.mutation({
+      query: (id) => ({
+        url: `/api/v1/admin/jobs/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Job"],
+    }),
   }),
 });
 export const {
@@ -69,4 +95,7 @@ export const {
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
   useGetJobsQuery,
+  useAddJobMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
 } = authApi;

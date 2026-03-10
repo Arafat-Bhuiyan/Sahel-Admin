@@ -1,6 +1,18 @@
 import { useState } from "react";
-import { useGetJobsQuery } from "../../Redux/api/authApi";
-import { ChevronDown, Edit3, Eye, Filter, Plus, Search, Trash2 } from "lucide-react";
+import {
+  useGetJobsQuery,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
+} from "../../Redux/api/authApi";
+import {
+  ChevronDown,
+  Edit3,
+  Eye,
+  Filter,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
 import JobModal from "./JobModal";
 import JobDetailsModal from "./JobDetailsModal";
 import toast from "react-hot-toast";
@@ -31,19 +43,65 @@ const JobManagement = () => {
     setIsJobModalOpen(true);
   };
 
-  const handleSaveJob = (data) => {
-    // API integration for save/update will be handled in JobModal or here via mutation
-    toast.success("Fonctionnalité à venir !");
+  const [deleteJob] = useDeleteJobMutation();
+
+  const handleSaveJob = () => {
+    // Handled inside JobModal
   };
 
   const handleDelete = (id) => {
-    // API integration for delete
-    toast.success("Fonctionnalité à venir !");
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3 p-1">
+          <p className="text-sm font-medium text-gray-900 font-['Outfit']">
+            Êtes-vous sûr de vouloir supprimer cette offre ?
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await deleteJob(id).unwrap();
+                  toast.success("Offre supprimée !");
+                } catch (err) {
+                  toast.error("Erreur lors de la suppression");
+                }
+              }}
+              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
+            >
+              Confirmer
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        duration: 5000,
+      },
+    );
   };
 
-  const handleToggleStatus = (id) => {
-    // API integration for status toggle
-    toast.success("Statut mis à jour !");
+  const [updateJob] = useUpdateJobMutation();
+
+  const handleToggleStatus = async (job) => {
+    const newStatus = job.status === "published" ? "draft" : "published";
+    try {
+      await updateJob({
+        id: job.id,
+        data: { status: newStatus },
+      }).unwrap();
+      toast.success(
+        `Statut mis à jour : ${newStatus === "published" ? "Publié" : "Brouillon"}`,
+      );
+    } catch (err) {
+      toast.error("Erreur lors de la mise à jour du statut");
+    }
   };
 
   const filteredJobs = jobs.filter(
@@ -163,7 +221,7 @@ const JobManagement = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-3">
                       <button
-                        onClick={() => handleToggleStatus(job.id)}
+                        onClick={() => handleToggleStatus(job)}
                         className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-all hover:scale-105 active:scale-95 capitalize ${
                           job.status === "published"
                             ? "bg-[#30618B] text-white shadow-sm"
@@ -214,7 +272,6 @@ const JobManagement = () => {
       <JobModal
         isOpen={isJobModalOpen}
         onClose={() => setIsJobModalOpen(false)}
-        onSave={handleSaveJob}
         editData={editJob}
       />
     </div>
