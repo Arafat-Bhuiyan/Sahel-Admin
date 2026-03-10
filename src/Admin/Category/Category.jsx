@@ -15,10 +15,14 @@ import CategoryModal from "./CategoryModal";
 import toast from "react-hot-toast";
 import { initialCategories } from "./categoryData";
 
+import { useGetCategoriesQuery } from "../../Redux/api/authApi";
+
 const Category = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
-  const [categories, setCategories] = useState(initialCategories);
+
+  const { data, isLoading, error } = useGetCategoriesQuery();
+  const categories = data?.results || [];
 
   const handleOpenModal = (category = null) => {
     setEditCategory(category);
@@ -31,65 +35,44 @@ const Category = () => {
   };
 
   const handleSaveCategory = (data) => {
-    if (editCategory) {
-      // Update existing
-      setCategories(
-        categories.map((cat) =>
-          cat.id === editCategory.id ? { ...cat, ...data } : cat,
-        ),
-      );
-      toast.success("Catégorie mise à jour avec succès !");
-    } else {
-      // Add new
-      const newCategory = {
-        id: Date.now(),
-        ...data,
-        icon: data.icon || Layers, // Use uploaded icon or fallback to Layers
-      };
-      setCategories([...categories, newCategory]);
-      toast.success("Catégorie ajoutée avec succès !");
-    }
+    // API integration for Create/Update will go here
+    toast.success("Fonctionnalité à venir !");
     handleCloseModal();
   };
 
   const handleDelete = (id) => {
-    toast(
-      (t) => (
-        <div className="flex flex-col gap-3 p-1">
-          <p className="text-sm font-medium text-gray-900 font-['Outfit']">
-            Êtes-vous sûr de vouloir supprimer cette catégorie ?
-          </p>
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors font-['Outfit']"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={() => {
-                setCategories(categories.filter((c) => c.id !== id));
-                toast.dismiss(t.id);
-                toast.success("Catégorie supprimée avec succès !");
-              }}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-['Outfit']"
-            >
-              Confirmer
-            </button>
-          </div>
-        </div>
-      ),
-      {
-        position: "top-center",
-        duration: 5000,
-      },
-    );
+    // API integration for Delete will go here
+    toast.success("Fonctionnalité à venir !");
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#30618B]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500 text-center p-10">
+        Une erreur est survenue lors du chargement des catégories.
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full min-h-screen p-6 flex flex-col gap-8 relative">
+    <div className="w-full min-h-screen p-6 flex flex-col gap-8 relative text-start">
       {/* Header Section */}
-      <div className="flex justify-end items-center w-full">
+      <div className="flex justify-between items-center w-full">
+        <div>
+          <h1 className="text-2xl font-bold text-zinc-900 font-['Outfit']">
+            Catégories
+          </h1>
+          <p className="text-neutral-500 text-sm font-normal font-['Outfit']">
+            Gérez vos catégories et sous-catégories
+          </p>
+        </div>
         <button
           onClick={() => handleOpenModal()}
           className="flex items-center gap-2 px-6 py-3 bg-[#30618B] rounded-md text-white hover:bg-[#254d6e] transition-colors"
@@ -108,27 +91,44 @@ const Category = () => {
           return (
             <div
               key={cat.id}
-              className="bg-white rounded-2xl p-6 border border-neutral-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all h-48"
+              className="bg-white rounded-2xl p-6 border border-neutral-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all h-52"
             >
               <div className="flex flex-col gap-2.5 text-start">
                 <div className="w-10 h-10 flex items-center justify-center">
-                  {typeof cat.icon === "string" ? (
+                  {cat.icon && typeof cat.icon === "string" ? (
                     <img
                       src={cat.icon}
-                      alt={cat.title}
+                      alt={cat.name}
                       className="w-8 h-8 object-contain rounded-sm"
                     />
                   ) : (
                     <Icon className="w-8 h-8 text-[#30618B]" />
                   )}
                 </div>
-                <div>
-                  <h3 className="text-zinc-900 text-xl font-bold font-['Outfit'] leading-7 truncate">
-                    {cat.title}
+                <div className="overflow-hidden">
+                  <h3 className="text-zinc-900 text-lg font-bold font-['Outfit'] leading-tight truncate">
+                    {cat.name}
                   </h3>
-                  <p className="text-neutral-500 text-sm font-normal font-['Outfit'] leading-5 mt-1 line-clamp-2">
-                    {cat.description}
-                  </p>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {cat.sub_categories?.slice(0, 3).map((sub, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] bg-blue-50 text-[#30618B] px-2 py-0.5 rounded-full"
+                      >
+                        {sub}
+                      </span>
+                    ))}
+                    {cat.sub_categories?.length > 3 && (
+                      <span className="text-[10px] text-neutral-400">
+                        +{cat.sub_categories.length - 3}
+                      </span>
+                    )}
+                  </div>
+                  {cat.description && (
+                    <p className="text-neutral-500 text-xs font-normal font-['Outfit'] mt-1 line-clamp-2">
+                      {cat.description}
+                    </p>
+                  )}
                 </div>
               </div>
 

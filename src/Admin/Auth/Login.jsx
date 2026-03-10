@@ -2,7 +2,7 @@ import React from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useLoginMutation } from "../../Redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../Redux/services/authSlice";
@@ -48,7 +48,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa]">
-      <Toaster position="top-right" />
       <div className="w-full max-w-md p-8">
         <div className="bg-white border border-[#e5e7eb] rounded-lg p-8 shadow-xl">
           <div className="flex justify-center mb-8">

@@ -1,6 +1,6 @@
 import { Phone, Save, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function General() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -25,8 +25,6 @@ export default function General() {
 
   return (
     <div className="w-full max-w-[1059px] bg-white rounded-2xl border border-neutral-200 shadow-sm flex flex-col font-['Outfit'] text-start">
-      <Toaster position="top-right" />
-
       {/* Header Section */}
       <div className="p-6 md:p-8 flex items-center gap-4">
         <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600">

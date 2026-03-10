@@ -23,13 +23,26 @@ ChartJS.register(
   Legend,
 );
 
-const SubscriberGrowth = () => {
+const SubscriberGrowth = ({ growthData }) => {
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+  const frenchLabels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+  const dataPoints = days.map((day) => growthData?.[day] || 0);
+
   const lineChartData = {
-    labels: ["Lun", "Mar", "Mer", "Jeu"],
+    labels: frenchLabels,
     datasets: [
       {
-        label: "Total des abonnés",
-        data: [780, 950, 1100, 1250],
+        label: "Nouveaux abonnés",
+        data: dataPoints,
         borderColor: "#30618B",
         backgroundColor: "transparent",
         borderWidth: 2,
@@ -74,9 +87,7 @@ const SubscriberGrowth = () => {
     scales: {
       y: {
         beginAtZero: true,
-        max: 1400,
         ticks: {
-          stepSize: 350,
           color: "#71717A",
           font: {
             family: "Inter",

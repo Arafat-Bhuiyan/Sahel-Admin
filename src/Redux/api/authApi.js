@@ -10,8 +10,24 @@ export const authApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    // === Dashboard Stats ===
+    getDashboardStats: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/dashboard-stats/",
+        method: "GET",
+      }),
+    }),
+    // === Category ===
+    getCategories: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/categories/",
+        method: "GET",
+      }),
+    }),
   }),
 });
 export const {
   useLoginMutation,
+  useGetDashboardStatsQuery,
+  useGetCategoriesQuery,
 } = authApi;

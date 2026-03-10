@@ -21,21 +21,37 @@ ChartJS.register(
   Legend,
 );
 
-const ChartsSection = () => {
+const ChartsSection = ({ smsData }) => {
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+  const frenchLabels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+  const triedData = days.map((day) => smsData?.[day]?.sms_sent_tried || 0);
+  const deliveredData = days.map(
+    (day) => smsData?.[day]?.sms_succesfully_sent || 0,
+  );
+
   // Data for the bar chart
   const barChartData = {
-    labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    labels: frenchLabels,
     datasets: [
       {
         label: "Envoyés",
-        data: [400, 300, 500, 450, 580, 350, 250],
+        data: triedData,
         backgroundColor: "#81BBAE",
         borderRadius: 0,
         barThickness: 44,
       },
       {
         label: "Delivrés",
-        data: [390, 290, 490, 440, 570, 340, 240],
+        data: deliveredData,
         backgroundColor: "#30618B",
         borderRadius: 0,
         barThickness: 44,
@@ -75,9 +91,7 @@ const ChartsSection = () => {
     scales: {
       y: {
         beginAtZero: true,
-        max: 600,
         ticks: {
-          stepSize: 150,
           color: "#71717A",
           font: {
             family: "Inter",
