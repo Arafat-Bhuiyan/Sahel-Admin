@@ -23,7 +23,10 @@ const CategoryModal = ({ isOpen, onClose, editData }) => {
     if (editData) {
       setFormData({
         name: editData.name || "",
-        sub_categories: editData.sub_categories?.join(", ") || "",
+        sub_categories:
+          editData.sub_categories
+            ?.map((s) => (typeof s === "object" ? s.name : s))
+            .join(", ") || "",
         icon: null,
       });
       // Handle icon preview for existing categories

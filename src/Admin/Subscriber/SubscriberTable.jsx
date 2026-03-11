@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import Pagination from "../Common/Pagination";
 
 const SubscriberTable = ({
   subscribers,
@@ -8,6 +9,15 @@ const SubscriberTable = ({
   toggleSelectAll,
   onStatusChange,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(subscribers.length / itemsPerPage);
+  const currentSubscribers = subscribers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   return (
     <div className="bg-white rounded-2xl border border-cyan-900/20 shadow-sm overflow-hidden pb-4 text-start">
       <div className="p-6 border-b border-cyan-900/10">
@@ -53,7 +63,7 @@ const SubscriberTable = ({
             </tr>
           </thead>
           <tbody>
-            {subscribers.map((sub) => (
+            {currentSubscribers.map((sub) => (
               <tr
                 key={sub.id}
                 className="border-b border-cyan-900/20 hover:bg-zinc-50 transition-colors"
@@ -128,6 +138,11 @@ const SubscriberTable = ({
           </tbody>
         </table>
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

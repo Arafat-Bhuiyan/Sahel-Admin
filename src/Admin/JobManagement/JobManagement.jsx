@@ -16,6 +16,7 @@ import {
 import JobModal from "./JobModal";
 import JobDetailsModal from "./JobDetailsModal";
 import toast from "react-hot-toast";
+import Pagination from "../Common/Pagination";
 
 const JobManagement = () => {
   const { data, isLoading, error } = useGetJobsQuery();
@@ -25,6 +26,8 @@ const JobManagement = () => {
 
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [editJob, setEditJob] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const jobs = data?.results || [];
 
@@ -111,6 +114,12 @@ const JobManagement = () => {
       job.company_location.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+  const currentJobs = filteredJobs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full min-h-[400px]">
@@ -194,7 +203,7 @@ const JobManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredJobs.map((job) => (
+              {currentJobs.map((job) => (
                 <tr
                   key={job.id}
                   className="border-b border-black/5 hover:bg-zinc-50 transition-colors"
@@ -259,6 +268,11 @@ const JobManagement = () => {
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {/* Detail Modal */}

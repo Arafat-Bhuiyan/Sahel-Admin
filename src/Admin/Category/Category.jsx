@@ -163,7 +163,7 @@ const Category = () => {
                         key={idx}
                         className="text-[10px] bg-blue-50 text-[#30618B] px-2 py-0.5 rounded-full"
                       >
-                        {sub}
+                        {typeof sub === "object" ? sub.name : sub}
                       </span>
                     ))}
                     {cat.sub_categories?.length > 3 && (

@@ -32,14 +32,16 @@ export default function TermsAndPolicies() {
 
   useEffect(() => {
     if (termsData || privacyData) {
+      console.log(termsData);
+      console.log(privacyData);
       setContent({
         terms:
-          termsData?.results?.[0]?.content ||
-          termsData?.content ||
+          termsData?.results?.[0]?.terms ||
+          termsData?.terms ||
           (typeof termsData === "string" ? termsData : ""),
         privacy:
-          privacyData?.results?.[0]?.content ||
-          privacyData?.content ||
+          privacyData?.results?.[0]?.policy ||
+          privacyData?.policy ||
           (typeof privacyData === "string" ? privacyData : ""),
       });
     }
@@ -74,13 +76,14 @@ export default function TermsAndPolicies() {
 
     try {
       if (activeTab === "terms") {
-        await updateTerms({ content: html }).unwrap();
+        const res = await updateTerms({ terms: html }).unwrap();
+        // console.log(res)
         toast.success("Termes mis à jour !");
       } else if (activeTab === "privacy") {
-        await updatePrivacy({ content: html }).unwrap();
+        const res = await updatePrivacy({ policy: html }).unwrap();
+        console.log(res)
         toast.success("Politique de confidentialité mise à jour !");
       }
-
       setContent((prev) => ({ ...prev, [activeTab]: html }));
       setIsEditing(false);
     } catch (err) {
