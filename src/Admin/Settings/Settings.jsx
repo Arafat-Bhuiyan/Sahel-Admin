@@ -6,7 +6,7 @@ import {
   Italic,
   Underline,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import General from "./General";
 import {
   useGetTermsQuery,
@@ -19,52 +19,23 @@ import toast from "react-hot-toast";
 export default function TermsAndPolicies() {
   const [activeTab, setActiveTab] = useState("general");
   const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState({
-    terms: "",
-    privacy: "",
-  });
-
   const { data: termsData, isLoading: isTermsLoading } = useGetTermsQuery();
   const { data: privacyData, isLoading: isPrivacyLoading } =
     useGetPrivacyQuery();
   const [updateTerms] = useUpdateTermsMutation();
   const [updatePrivacy] = useUpdatePrivacyMutation();
 
-  useEffect(() => {
-    if (termsData || privacyData) {
-      console.log(termsData);
-      console.log(privacyData);
-      setContent({
-        terms:
-          termsData?.results?.[0]?.terms ||
-          termsData?.terms ||
-          (typeof termsData === "string" ? termsData : ""),
-        privacy:
-          privacyData?.results?.[0]?.policy ||
-          privacyData?.policy ||
-          (typeof privacyData === "string" ? privacyData : ""),
-      });
-    }
-  }, [termsData, privacyData]);
+  const termsContent =
+    termsData?.results?.[0]?.terms ||
+    termsData?.terms ||
+    (typeof termsData === "string" ? termsData : "");
+  const privacyContent =
+    privacyData?.results?.[0]?.policy ||
+    privacyData?.policy ||
+    (typeof privacyData === "string" ? privacyData : "");
 
-  const [editContent, setEditContent] = useState(content[activeTab]);
+  const [editContent, setEditContent] = useState("");
   const editorRef = useRef(null);
-
-  useEffect(() => {
-    setEditContent(content[activeTab]);
-  }, [activeTab, content]);
-
-  useEffect(() => {
-    const el = editorRef.current;
-    if (!el) return;
-    const handlePaste = (e) => {
-      e.preventDefault();
-      const text = e.clipboardData?.getData("text/plain") ?? "";
-      document.execCommand("insertText", false, text);
-    };
-    el.addEventListener("paste", handlePaste);
-    return () => el.removeEventListener("paste", handlePaste);
-  }, [isEditing]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -76,15 +47,12 @@ export default function TermsAndPolicies() {
 
     try {
       if (activeTab === "terms") {
-        const res = await updateTerms({ terms: html }).unwrap();
-        // console.log(res)
+        await updateTerms({ terms: html }).unwrap();
         toast.success("Termes mis à jour !");
       } else if (activeTab === "privacy") {
-        const res = await updatePrivacy({ policy: html }).unwrap();
-        console.log(res)
+        await updatePrivacy({ policy: html }).unwrap();
         toast.success("Politique de confidentialité mise à jour !");
       }
-      setContent((prev) => ({ ...prev, [activeTab]: html }));
       setIsEditing(false);
     } catch (err) {
       toast.error("Une erreur est survenue lors de l'enregistrement");
@@ -92,11 +60,16 @@ export default function TermsAndPolicies() {
   };
 
   const handleCancelEdit = () => {
-    setEditContent(content[activeTab]);
     setIsEditing(false);
   };
 
-  const [fontSize, setFontSize] = useState("12");
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain") ?? "";
+    document.execCommand("insertText", false, text);
+  };
+
+  // const [fontSize, setFontSize] = useState("12");
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -109,13 +82,16 @@ export default function TermsAndPolicies() {
     }
   };
 
+  /*
   const handleFontSizeChange = (e) => {
     const newSize = e.target.value;
     setFontSize(newSize);
     // Apply the new font size to the selected text only
     applyFontSizeToSelection(newSize);
   };
+  */
 
+  /*
   const applyFontSizeToSelection = (size) => {
     const selection = window.getSelection();
     const range = selection?.getRangeAt(0);
@@ -125,6 +101,7 @@ export default function TermsAndPolicies() {
       range.surroundContents(span);
     }
   };
+  */
 
   return (
     <div className="min-h-screen py-6">
@@ -166,7 +143,12 @@ export default function TermsAndPolicies() {
 
           {!isEditing && activeTab !== "general" && (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                setEditContent(
+                  activeTab === "terms" ? termsContent : privacyContent,
+                );
+                setIsEditing(true);
+              }}
               className="px-4 py-2 bg-cyan-900 text-white font-semibold rounded hover:bg-cyan-800 transition-colors"
             >
               Modifier
@@ -177,6 +159,7 @@ export default function TermsAndPolicies() {
         {/* Toolbar */}
         {isEditing && activeTab !== "general" && (
           <div className="flex items-center flex-wrap gap-2 mb-4 p-2 border border-gray-300 rounded bg-gray-50">
+            {/* 
             <select
               value={fontSize}
               onChange={handleFontSizeChange}
@@ -192,6 +175,7 @@ export default function TermsAndPolicies() {
             </select>
 
             <div className="w-px h-6 bg-gray-300" />
+            */}
 
             <button
               onClick={() => applyFormat("bold")}
@@ -260,13 +244,10 @@ export default function TermsAndPolicies() {
                   ref={editorRef}
                   contentEditable
                   suppressContentEditableWarning
-                  className="min-h-[400px] p-4 border border-gray-300 rounded focus:outline-none focus:ring-2 text-gray-800 leading-relaxed"
-                  style={{ fontSize: `${fontSize}px` }}
+                  className="h-[500px] overflow-y-auto p-4 border border-gray-300 rounded focus:outline-none focus:ring-2 text-gray-800 leading-relaxed"
+                  onPaste={handlePaste}
                   dangerouslySetInnerHTML={{
-                    __html: (editContent ?? content[activeTab] ?? "").replace(
-                      /\n/g,
-                      "<br>",
-                    ),
+                    __html: (editContent || "").replace(/\n/g, "<br>"),
                   }}
                   onBlur={(e) =>
                     setEditContent(
@@ -293,7 +274,10 @@ export default function TermsAndPolicies() {
               <div className="prose prose-sm max-w-none">
                 <div
                   className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: content[activeTab] }}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      activeTab === "terms" ? termsContent : privacyContent,
+                  }}
                 />
               </div>
             )}
