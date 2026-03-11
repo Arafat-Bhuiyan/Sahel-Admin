@@ -8,6 +8,7 @@ import {
   useRemoveFromBlacklistMutation,
   useAddToBlacklistMutation,
   useUpdateSubscriberMutation,
+  useSubscriberBulkActionMutation,
 } from "../../Redux/api/authApi";
 import toast from "react-hot-toast";
 
@@ -21,6 +22,7 @@ const Subscriber = () => {
   const [removeFromBlacklist] = useRemoveFromBlacklistMutation();
   const [addToBlacklist] = useAddToBlacklistMutation();
   const [updateSubscriber] = useUpdateSubscriberMutation();
+  const [bulkAction] = useSubscriberBulkActionMutation();
 
   const [activeTab, setActiveTab] = useState("Abonnés");
   const [selectedIds, setSelectedIds] = useState([]);
@@ -53,34 +55,35 @@ const Subscriber = () => {
   };
 
   const handleStatusChange = async (id, newStatus) => {
-    // If setting to blacklist, we might use addToBlacklist instead
-    if (newStatus === "blacklist") {
-      const sub = subscribers.find((s) => s.id === id);
-      if (sub) {
-        try {
-          await addToBlacklist({ phone_number: sub.phone_number }).unwrap();
-          toast.success("Abonné ajouté à la liste noire");
-        } catch (err) {
-          toast.error("Erreur lors de l'ajout à la liste noire");
-        }
-      }
-      return;
+    const sub = subscribers.find((s) => s.id === id);
+    if (!sub) return;
+
+    const payload = {
+      action: newStatus,
+      phone_numbers: [sub.phone_number],
+    };
+
+    if (newStatus === "subscribed") {
+      const catId = window.prompt("Entrez l'ID de la catégorie (ex: 1)");
+      if (!catId) return;
+      payload.action = "subscribe";
+      payload.category_id = Number(catId);
+    } else if (newStatus === "unsubscribed") {
+      payload.action = "unsubscribe";
     }
 
-    const isActive = newStatus === "subscribed";
     try {
-      await updateSubscriber({
-        id,
-        data: { sms_notification_active: isActive },
-      }).unwrap();
+      await bulkAction(payload).unwrap();
 
       const statusTranslate = {
         subscribed: "abonné",
         unsubscribed: "désabonné",
+        blacklist: "liste noire",
       };
       toast.success(`Abonné marqué comme ${statusTranslate[newStatus]}`);
     } catch (err) {
-      toast.error("Erreur lors de la mise à jour du statut");
+      console.error("Bulk Action Error:", err);
+      toast.error(err?.data?.message || "Erreur lors de la mise à jour");
     }
   };
 

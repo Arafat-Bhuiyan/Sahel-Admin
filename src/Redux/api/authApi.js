@@ -124,6 +124,46 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Subscriber", "Blacklist"],
     }),
+    // === Action Subscriber ===
+    subscriberBulkAction: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/subscribers/bulk_action/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Subscriber", "Blacklist"],
+    }),
+    // === Terms & Policy ===
+    getTerms: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/settings/terms/",
+        method: "GET",
+      }),
+      providesTags: ["Setting"],
+    }),
+    updateTerms: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/settings/terms/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
+    getPrivacy: builder.query({
+      query: () => ({
+        url: "/api/v1/admin/settings/privacy/",
+        method: "GET",
+      }),
+      providesTags: ["Setting"],
+    }),
+    updatePrivacy: builder.mutation({
+      query: (data) => ({
+        url: "/api/v1/admin/settings/privacy/",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Setting"],
+    }),
   }),
 });
 export const {
@@ -142,4 +182,9 @@ export const {
   useAddToBlacklistMutation,
   useRemoveFromBlacklistMutation,
   useUpdateSubscriberMutation,
+  useSubscriberBulkActionMutation,
+  useGetTermsQuery,
+  useUpdateTermsMutation,
+  useGetPrivacyQuery,
+  useUpdatePrivacyMutation,
 } = authApi;

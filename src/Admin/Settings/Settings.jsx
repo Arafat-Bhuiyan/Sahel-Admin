@@ -8,22 +8,42 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import General from "./General";
+import {
+  useGetTermsQuery,
+  useUpdateTermsMutation,
+  useGetPrivacyQuery,
+  useUpdatePrivacyMutation,
+} from "../../Redux/api/authApi";
+import toast from "react-hot-toast";
 
 export default function TermsAndPolicies() {
   const [activeTab, setActiveTab] = useState("general");
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState({
-    terms: `<ul>
-<li>Lorem ipsum dolor sit amet consectetur. Lacus at venenatis gravida vivamus mauris. Quisque mi est vel dis. Donec rhoncus laoreet odio orci sed risus elit accumsan. Mattis ut est tristique amet vitae at aliquet. Ac vel porttitor egestas scelerisque enim quisque senectus. Euismod ultricies vulputate id cras bibendum sollicitudin proin odio bibendum. Velit velit in scelerisque erat etiam rutrum phasellus nunc. Sed lectus sed a at eget. Nunc purus sed quis at risus. Consectetur nibh justo proin placerat condimentum id at adipiscing.</li>
-<li>Vel blandit mi nulla sodales consectetur. Egestas tristique ultrices gravida duis nisl odio. Posuere curabitur eu platea pellentesque ut. Facilisi elementum neque mauris facilisis in. Cursus condimentum ipsum pretium consequat turpis at porttitor nisl.</li>
-<li>Scelerisque tellus praesent condimentum euismod a faucibus. Auctor at ultricies at urna aliquam massa pellentesque. Vitae vulputate nulla diam placerat m.</li>
-</ul>`,
-    privacy: `<ul>
-<li>Le contenu de la <strong>politique de confidentialité</strong> va ici. Cette section contient des informations importantes sur la façon dont nous traitons vos données et votre vie privée.</li>
-<li>Nous nous engageons à protéger vos informations personnelles et à respecter votre vie privée.</li>
-<li>Toutes les données sont traitées conformément aux lois et réglementations en vigueur.</li>
-</ul>`,
+    terms: "",
+    privacy: "",
   });
+
+  const { data: termsData, isLoading: isTermsLoading } = useGetTermsQuery();
+  const { data: privacyData, isLoading: isPrivacyLoading } =
+    useGetPrivacyQuery();
+  const [updateTerms] = useUpdateTermsMutation();
+  const [updatePrivacy] = useUpdatePrivacyMutation();
+
+  useEffect(() => {
+    if (termsData || privacyData) {
+      setContent({
+        terms:
+          termsData?.results?.[0]?.content ||
+          termsData?.content ||
+          (typeof termsData === "string" ? termsData : ""),
+        privacy:
+          privacyData?.results?.[0]?.content ||
+          privacyData?.content ||
+          (typeof privacyData === "string" ? privacyData : ""),
+      });
+    }
+  }, [termsData, privacyData]);
 
   const [editContent, setEditContent] = useState(content[activeTab]);
   const editorRef = useRef(null);
@@ -49,10 +69,23 @@ export default function TermsAndPolicies() {
     setIsEditing(false);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const html = editorRef.current?.innerHTML ?? editContent;
-    setContent((prev) => ({ ...prev, [activeTab]: html }));
-    setIsEditing(false);
+
+    try {
+      if (activeTab === "terms") {
+        await updateTerms({ content: html }).unwrap();
+        toast.success("Termes mis à jour !");
+      } else if (activeTab === "privacy") {
+        await updatePrivacy({ content: html }).unwrap();
+        toast.success("Politique de confidentialité mise à jour !");
+      }
+
+      setContent((prev) => ({ ...prev, [activeTab]: html }));
+      setIsEditing(false);
+    } catch (err) {
+      toast.error("Une erreur est survenue lors de l'enregistrement");
+    }
   };
 
   const handleCancelEdit = () => {
@@ -214,7 +247,11 @@ export default function TermsAndPolicies() {
 
         {activeTab !== "general" && (
           <>
-            {isEditing ? (
+            {(activeTab === "terms" ? isTermsLoading : isPrivacyLoading) ? (
+              <div className="py-10 text-center text-gray-500 font-medium">
+                Chargement...
+              </div>
+            ) : isEditing ? (
               <>
                 <div
                   ref={editorRef}
